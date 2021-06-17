@@ -3,15 +3,16 @@
 (() => {
   const QUANTITY_OF_ADVERTISEMENTS = 8;
   const MIN_QUANTITY_OF_ROOMS = 1;
-  const MAX_QUANTITY_OF_ROOMS = 5;
+  const MAX_QUANTITY_OF_ROOMS = 3;
   const MIN_QUANTITY_OF_VISITORS = 1;
-  const MAX_QUANTITY_OF_VISITORS = 15;
+  const MAX_QUANTITY_OF_VISITORS = 3;
   const MONEY_CONVERTER = 100;
   const MIN_X_COORDINATE = 100;
   const MAX_X_COORDINATE = 1100;
   const MIN_Y_COORDINATE = 130;
   const MAX_Y_COORDINATE = 630;
-
+  const PIN_HEIGHT = 87;
+  const PIN_MIDDLE_WIDTH = 36;
   const TYPES_OF_APARTMENTS = [`palace`, `flat`, `house`, `bungalow`];
   const NAMES_OF_APARTMENTS = [`Дворец`, `Квартира`, `Дом`, `Бунгало`];
   const TIMES = [`12:00`, `13:00`, `14:00`];
@@ -19,16 +20,91 @@
   const PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`];
 
   const map = document.querySelector(`.map`);
+  const mapSpace = map.querySelector(`.map__overlay`);
   const pins = map.querySelector(`.map__pins`);
   const filter = map.querySelector(`.map__filters-container`);
+  const form = document.querySelector(`.ad-form`);
+  const activeFields = form.querySelectorAll(`.ad-form input, .ad-form select, .ad-form textarea, .ad-form button`);
+  const mainPin = map.querySelector(`.map__pin--main`);
+  const addressInput = form.querySelector(`#address`);
 
-  map.classList.remove(`map--faded`);
+  let currentCoordinateLeft = 570;
+  let currentCoordinateTop = 375;
+
+  const calculateCurrentValue = (evt) => {
+    const type = evt.type;
+    if (type === `mousedown`) {
+      currentCoordinateLeft = evt.offsetX;
+      currentCoordinateTop = evt.offsetY;
+    }
+    if (evt.offsetY < 130) {
+      currentCoordinateTop = 130 + PIN_HEIGHT;
+    } else if (evt.offsetY > 630) {
+      currentCoordinateTop = 630 + PIN_HEIGHT;
+    }
+
+    if (evt.offsetX < 270) {
+      currentCoordinateLeft = 270;
+    } else if (evt.offsetX > 1200) {
+      currentCoordinateLeft = 1200;
+    }
+  };
+
+  const setAddressValue = (evt) => {
+    calculateCurrentValue(evt);
+    addressInput.value = `${currentCoordinateLeft + PIN_MIDDLE_WIDTH}, ${currentCoordinateTop + PIN_HEIGHT}`;
+  };
+
+  const convertFieldsToDisabled = () => {
+    activeFields.forEach((field) => field.setAttribute(`disabled`, `disabled`));
+  };
+
+  const convertFormToActive = () => {
+    form.classList.remove(`ad-form--disabled`);
+    activeFields.forEach((field) => field.removeAttribute(`disabled`));
+  };
+
+  const activatePage = (evt) => {
+    map.classList.remove(`map--faded`);
+    convertFormToActive();
+    setAddressValue(evt);
+  };
+
+  const onMapSpaceMouseDown = (evt) => {
+    calculateCurrentValue(evt);
+    mainPin.style.left = `${currentCoordinateLeft - PIN_MIDDLE_WIDTH}px`;
+    mainPin.style.top = `${currentCoordinateTop - PIN_HEIGHT}px`;
+    setAddressValue(evt);
+  };
+
+  const onMainPinMouseDown = (evt) => {
+    if (typeof evt === `object`) {
+      switch (evt.button) {
+        case 0:
+          activatePage(evt);
+          break;
+      }
+    }
+  };
+
+  const onEnterKeydown = (evt) => {
+    const isEnter = evt.key === `Enter`;
+    if (isEnter) {
+      evt.preventDefault();
+      activatePage();
+    }
+  };
+
+  const addListenerToActivatePage = () => {
+    mapSpace.addEventListener(`mousedown`, onMapSpaceMouseDown);
+    mainPin.addEventListener(`mousedown`, onMainPinMouseDown);
+    mainPin.addEventListener(`keydown`, onEnterKeydown);
+  };
 
   const getAdvertisements = () => {
     let advertisements = [];
     for (let i = 0; i < QUANTITY_OF_ADVERTISEMENTS; i++) {
       let number = i + 1;
-
       const advertisement = {
         author: {
           avatar: `img/avatars/user0${number}.png`
@@ -74,7 +150,13 @@
     map.insertBefore(fragment, filter);
   };
 
-  const pinsArray = getAdvertisements();
-  fillDomElementsByPin(pinsArray);
-  fillDomElementsByCard(pinsArray);
+  const activate = () => {
+    const pinsArray = getAdvertisements();
+    fillDomElementsByPin(pinsArray);
+    convertFieldsToDisabled();
+    addListenerToActivatePage();
+    fillDomElementsByCard(pinsArray);
+  };
+
+  activate();
 })();
