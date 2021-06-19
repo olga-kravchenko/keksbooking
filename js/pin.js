@@ -7,6 +7,7 @@
 
   const create = (advertisement) => {
     const newPin = pinTemplate.cloneNode(true);
+    newPin.querySelector(`.map__pin`).dataset.id = advertisement.id;
     newPin.querySelector(`.map__pin`).style.left = `${advertisement.location.x + SHIFT_PIN_X}px`;
     newPin.querySelector(`.map__pin`).style.top = `${advertisement.location.y + SHIFT_PIN_Y}px`;
     newPin.querySelector(`img`).src = advertisement.author.avatar;
