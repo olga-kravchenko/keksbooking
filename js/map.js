@@ -19,7 +19,7 @@
   let currentCoordinateLeft = 570;
   let currentCoordinateTop = 375;
 
-  const pinsArray = window.advertisements.get();
+  const pinsArray = window.data.getAdvertisements();
 
   const convertFieldsToDisabled = () => {
     activeFields.forEach((field) => field.setAttribute(`disabled`, `disabled`));
@@ -132,7 +132,7 @@
     addListenerToActivatePage();
   };
 
-  window.page = {
+  window.map = {
     activate,
   };
 })();

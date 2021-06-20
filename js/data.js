@@ -16,7 +16,7 @@
   const FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
   const PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`];
 
-  const get = () => {
+  const getAdvertisements = () => {
     let advertisements = [];
     for (let i = 0; i < QUANTITY_OF_ADVERTISEMENTS; i++) {
       let number = i + 1;
@@ -48,7 +48,7 @@
   };
 
 
-  window.advertisements = {
-    get,
+  window.data = {
+    getAdvertisements,
   };
 })();

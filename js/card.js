@@ -5,7 +5,7 @@
   const map = document.querySelector(`.map`);
   const filter = map.querySelector(`.map__filters-container`);
 
-  const pinsArray = window.advertisements.get();
+  const pinsArray = window.data.getAdvertisements();
 
   const addFeatures = (newCard, advertisement) => {
     const featureSection = newCard.querySelector(`.popup__features`);

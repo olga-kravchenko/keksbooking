@@ -2,5 +2,5 @@
 
 (() => {
   window.form.activate();
-  window.page.activate();
+  window.map.activate();
 })();
