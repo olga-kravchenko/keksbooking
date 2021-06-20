@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const PIN_HEIGHT = 87;
-  const PIN_MIDDLE_WIDTH = 36;
+  const PIN_MIDDLE_WIDTH = 34;
   const MAX_MAP_WIDTH = 1200;
   const MIN_MAP_WIDTH = 270;
   const MIN_MAP_HEIGHT = 130;
@@ -11,13 +11,13 @@
   const map = document.querySelector(`.map`);
   const mainPin = map.querySelector(`.map__pin--main`);
   const pinsSection = map.querySelector(`.map__pins`);
-  const mapSpace = map.querySelector(`.map__overlay`);
   const form = document.querySelector(`.ad-form`);
   const activeFields = form.querySelectorAll(`.ad-form input, .ad-form select, .ad-form textarea, .ad-form button`);
   const addressInput = form.querySelector(`#address`);
 
   let currentCoordinateLeft = 570;
   let currentCoordinateTop = 375;
+  let startCoords;
 
   const pinsArray = window.data.getAdvertisements();
 
@@ -32,30 +32,11 @@
     }
   };
 
-  const calculateValueOfCoordinate = (evt) => {
-    const type = evt.type;
-    if (type === `mousedown`) {
-      currentCoordinateLeft = evt.offsetX;
-      currentCoordinateTop = evt.offsetY;
-    }
-
-    if (evt.offsetY < MIN_MAP_HEIGHT) {
-      currentCoordinateTop = MIN_MAP_HEIGHT + PIN_HEIGHT;
-    } else if (evt.offsetY > MAX_MAP_HEIGHT) {
-      currentCoordinateTop = MAX_MAP_HEIGHT + PIN_HEIGHT;
-    }
-
-    if (evt.offsetX < MIN_MAP_WIDTH) {
-      currentCoordinateLeft = MIN_MAP_WIDTH;
-    } else if (evt.offsetX > MAX_MAP_WIDTH) {
-      currentCoordinateLeft = MAX_MAP_WIDTH;
-    }
-  };
-
   const convertPageToActive = () => {
     map.classList.remove(`map--faded`);
     form.classList.remove(`ad-form--disabled`);
     activeFields.forEach((field) => field.removeAttribute(`disabled`));
+    mainPin.removeEventListener(`mousedown`, onMainPinMouseDown);
   };
 
   const fillDomElementsByPin = () => {
@@ -79,34 +60,22 @@
     pinsSection.addEventListener(`click`, onPinSectionClick);
   };
 
-  const indicatePinPosition = () => {
-    mainPin.style.left = `${currentCoordinateLeft - PIN_MIDDLE_WIDTH}px`;
-    mainPin.style.top = `${currentCoordinateTop - PIN_HEIGHT}px`;
-  };
-
-  const setAddressValue = (evt) => {
-    calculateValueOfCoordinate(evt);
+  const setAddressValue = () => {
     addressInput.value = `${currentCoordinateLeft + PIN_MIDDLE_WIDTH}, ${currentCoordinateTop + PIN_HEIGHT}`;
   };
 
-  const activatePage = (evt) => {
+  const activatePage = () => {
     convertPageToActive();
     fillDomElementsByPin();
     addListenerOnPinSection();
-    setAddressValue(evt);
-  };
-
-  const onMapSpaceMouseDown = (evt) => {
-    calculateValueOfCoordinate(evt);
-    indicatePinPosition();
-    setAddressValue(evt);
+    setAddressValue();
   };
 
   const onMainPinMouseDown = (evt) => {
     if (typeof evt === `object`) {
       switch (evt.button) {
         case RIGHT_BUTTON:
-          activatePage(evt);
+          activatePage();
           break;
       }
     }
@@ -120,10 +89,65 @@
     }
   };
 
+  const checkCoordinate = () => {
+    currentCoordinateTop = currentCoordinateTop > MAX_MAP_HEIGHT ? MAX_MAP_HEIGHT : currentCoordinateTop;
+    currentCoordinateTop = currentCoordinateTop < MIN_MAP_HEIGHT ? MIN_MAP_HEIGHT : currentCoordinateTop;
+    currentCoordinateLeft = currentCoordinateLeft > (MAX_MAP_WIDTH - PIN_MIDDLE_WIDTH) ? (MAX_MAP_WIDTH - PIN_MIDDLE_WIDTH) : currentCoordinateLeft;
+    currentCoordinateLeft = currentCoordinateLeft < MIN_MAP_WIDTH ? MIN_MAP_WIDTH : currentCoordinateLeft;
+  };
+
+  const setPinPosition = () => {
+    mainPin.style.top = `${currentCoordinateTop}px`;
+    mainPin.style.left = `${currentCoordinateLeft}px`;
+  };
+
+  const setMoveValue = (evt) => {
+    let shift = {
+      x: startCoords.x - evt.clientX,
+      y: startCoords.y - evt.clientY
+    };
+    startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+    currentCoordinateLeft = mainPin.offsetLeft - shift.x;
+    currentCoordinateTop = mainPin.offsetTop - shift.y;
+  };
+
+  const onMouseMove = (evt) => {
+    evt.preventDefault();
+    setMoveValue(evt);
+    checkCoordinate();
+    setPinPosition();
+    setAddressValue();
+  };
+
+  const onMouseUp = (evt) => {
+    evt.preventDefault();
+    document.removeEventListener(`mousemove`, onMouseMove);
+    document.removeEventListener(`mouseup`, onMouseUp);
+  };
+
+  const onMouseDown = (evt) => {
+    if (typeof evt === `object`) {
+      switch (evt.button) {
+        case RIGHT_BUTTON:
+          evt.preventDefault();
+          startCoords = {
+            x: evt.clientX,
+            y: evt.clientY
+          };
+          document.addEventListener(`mousemove`, onMouseMove);
+          document.addEventListener(`mouseup`, onMouseUp);
+          break;
+      }
+    }
+  };
+
   const addListenerToActivatePage = () => {
-    mapSpace.addEventListener(`mousedown`, onMapSpaceMouseDown);
     mainPin.addEventListener(`mousedown`, onMainPinMouseDown);
     mainPin.addEventListener(`keydown`, onEnterKeydown);
+    mainPin.addEventListener(`mousedown`, onMouseDown);
   };
 
   const activate = () => {
