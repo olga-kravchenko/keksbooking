@@ -37,24 +37,24 @@
   const price = form.querySelector(`#price`);
   const timeIn = form.querySelector(`#timein`);
   const timeOut = form.querySelector(`#timeout`);
+  const formResetButton = form.querySelector(`.ad-form__reset`);
 
-  const checkRoomsAndPlaces = (evt) => {
+  const roomsAndPlacesValid = (evt) => {
     const rooms = +roomQuantity.value;
     const places = +capacityQuantity.value;
     let currentMessage = window.constants.EMPTY_STRING;
-
     if (rooms === MAX_QUANTITY_OF_ROOMS && places !== MIN_QUANTITY_OF_PLACES
       || places === MIN_QUANTITY_OF_PLACES && rooms !== MAX_QUANTITY_OF_ROOMS) {
       currentMessage = Message.TOO_MANY_ROOMS;
     } else if (rooms < places) {
       currentMessage = Message.NOT_ENOUGH_ROOMS;
     }
-
     if (currentMessage) {
       evt.preventDefault();
     }
     roomQuantity.setCustomValidity(currentMessage);
     roomQuantity.reportValidity();
+    return Boolean(!currentMessage);
   };
 
   const onTypeChange = () => {
@@ -98,13 +98,35 @@
     timeIn.value = changeTimeValue(timeOut.value);
   };
 
+  const onSuccess = () => {
+    window.utilForm.showSuccessModal();
+  };
+
+  const onError = () => {
+    window.utilForm.showErrorModal();
+  };
+
+  const onFormResetButtonClick = () => {
+    form.reset();
+  };
+
+  const onFormSubmit = (evt) => {
+    if (roomsAndPlacesValid(evt)) {
+      evt.preventDefault();
+      const formData = new FormData(form);
+      window.backend.post(formData, onSuccess, onError);
+      window.map.deactivate();
+    }
+  };
+
   const addListener = () => {
-    roomQuantity.addEventListener(`change`, checkRoomsAndPlaces);
-    capacityQuantity.addEventListener(`change`, checkRoomsAndPlaces);
+    roomQuantity.addEventListener(`change`, roomsAndPlacesValid);
+    capacityQuantity.addEventListener(`change`, roomsAndPlacesValid);
     type.addEventListener(`change`, onTypeChange);
     timeIn.addEventListener(`change`, onTimeInChange);
     timeOut.addEventListener(`change`, onTimeOutChange);
-    form.addEventListener(`submit`, checkRoomsAndPlaces);
+    formResetButton.addEventListener(`click`, onFormResetButtonClick);
+    form.addEventListener(`submit`, onFormSubmit);
   };
 
   const activate = () => {

@@ -86,7 +86,7 @@
       <h2 class="notice__title">Ваше объявление</h2>
       <form class="ad-form ad-form--disabled"
             method="post" enctype="multipart/form-data"
-            action=" https://21.javascript.pages.academy/keksobooking "
+            action="https://21.javascript.pages.academy/keksobooking"
             autocomplete="off">
         <fieldset class="ad-form-header">
           <legend class="ad-form-header__title">Ваша фотография (для карты)</legend>
@@ -131,6 +131,7 @@
                  type="number"
                  placeholder="1000"
                  min="1000"
+                 max="1000000"
                  required>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--time">
@@ -263,8 +264,8 @@
   </template>
   <script src="js/constants.js"></script>
   <script src="js/backend.js"></script>
+  <script src="js/util-form.js"></script>
   <script src="js/util.js"></script>
-  <script src="js/data.js"></script>
   <script src="js/pin.js"></script>
   <script src="js/card.js"></script>
   <script src="js/map.js"></script>

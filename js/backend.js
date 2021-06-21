@@ -5,7 +5,7 @@ const TIMEOUT_IN_MS = 10000;
 
 const ServerUrl = {
   GET: `https://21.javascript.pages.academy/keksobooking/data`,
-  POST: `https://21.javascript.pages.academy/kekstagram`,
+  POST: `https://21.javascript.pages.academy/keksobooking`,
 };
 
 const onRequestLoad = (request, onLoad, onError) => {

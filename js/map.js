@@ -11,7 +11,7 @@
   const map = document.querySelector(`.map`);
   const mainPin = map.querySelector(`.map__pin--main`);
   const pinsSection = map.querySelector(`.map__pins`);
-  const filter = map.querySelector(`.map__filters-container`);
+
   const form = document.querySelector(`.ad-form`);
   const activeFields = form.querySelectorAll(`.ad-form input, .ad-form select, .ad-form textarea, .ad-form button`);
   const addressInput = form.querySelector(`#address`);
@@ -39,6 +39,14 @@
     mainPin.removeEventListener(`mousedown`, onMainPinMouseDown);
   };
 
+  const convertPageToDeactivate = () => {
+    map.classList.add(`map--faded`);
+    form.classList.add(`ad-form--disabled`);
+    activeFields.forEach((field) => field.setAttribute(`disabled`, `disabled`));
+    form.reset();
+    mainPin.addEventListener(`mousedown`, onMainPinMouseDown);
+  };
+
   const fillDomElementsByPin = () => {
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < pinsArray.length; i++) {
@@ -48,63 +56,26 @@
     pinsSection.appendChild(fragment);
   };
 
-  const removeOldCard = () => {
-    const oldCard = document.querySelector(`.map__card.popup`);
-    if (oldCard) {
-      oldCard.remove();
-    }
-  };
-
-  const showCard = (pin) => {
-    const id = pin.dataset.id;
-    const fragment = document.createDocumentFragment();
-    const newCard = window.card.create(pinsArray[id], id);
-    fragment.appendChild(newCard);
-    map.insertBefore(fragment, filter);
-  };
-
-  const hideCard = () => {
-    const card = document.querySelector(`.map__card`);
-    card.remove();
-  };
-
-  const onCloseButtonClick = () => {
-    removeEventListenerToHideCard();
-    hideCard();
-  };
-
-  const onEscKeydown = (evt) => {
-    const isEscape = evt.key === `Escape`;
-    if (isEscape) {
-      evt.preventDefault();
-      removeEventListenerToHideCard();
-      hideCard();
-    }
-  };
-
-  const addEventListenerToHideCard = () => {
-    const closeButton = document.querySelector(`.popup__close`);
-    closeButton.addEventListener(`click`, onCloseButtonClick);
-    document.addEventListener(`keydown`, onEscKeydown);
-  };
-
-  const removeEventListenerToHideCard = () => {
-    const closeButton = document.querySelector(`.popup__close`);
-    closeButton.removeEventListener(`click`, onCloseButtonClick);
-    document.removeEventListener(`keydown`, onEscKeydown);
-  };
-
-  const openCard = (pin) => {
-    removeOldCard();
-    showCard(pin);
-    addEventListenerToHideCard();
-  };
-
   const onPinSectionClick = (evt) => {
     const pin = evt.target.closest(`.map__pin:not(.map__pin--main)`);
     const card = document.querySelector(`.map__card.popup`);
     if (pin && !card) {
-      openCard(pin);
+      window.card.open(pin, pinsArray);
+    } else {
+      if (card) {
+        if (card.dataset !== pin.dataset) {
+          window.card.open(pin, pinsArray);
+        }
+      }
+    }
+  };
+
+  const removeOldPins = () => {
+    const pins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
+    if (pins) {
+      pins.forEach((e) => {
+        e.remove();
+      });
     }
   };
 
@@ -209,7 +180,18 @@
     addListenerToActivatePage();
   };
 
+  const deactivate = () => {
+    currentCoordinateLeft = 570;
+    currentCoordinateTop = 375;
+    setPinPosition();
+    convertPageToDeactivate();
+    removeOldPins();
+    window.card.remove();
+  };
+
   window.map = {
     activate,
+    deactivate,
+    setAddressValue,
   };
 })();
