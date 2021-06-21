@@ -11,15 +11,15 @@
   const map = document.querySelector(`.map`);
   const mainPin = map.querySelector(`.map__pin--main`);
   const pinsSection = map.querySelector(`.map__pins`);
+  const filter = map.querySelector(`.map__filters-container`);
   const form = document.querySelector(`.ad-form`);
   const activeFields = form.querySelectorAll(`.ad-form input, .ad-form select, .ad-form textarea, .ad-form button`);
   const addressInput = form.querySelector(`#address`);
 
   let currentCoordinateLeft = 570;
   let currentCoordinateTop = 375;
-  let startCoords;
-
-  const pinsArray = window.data.getAdvertisements();
+  let startCoordinates;
+  let pinsArray;
 
   const convertFieldsToDisabled = () => {
     activeFields.forEach((field) => field.setAttribute(`disabled`, `disabled`));
@@ -48,11 +48,63 @@
     pinsSection.appendChild(fragment);
   };
 
+  const removeOldCard = () => {
+    const oldCard = document.querySelector(`.map__card.popup`);
+    if (oldCard) {
+      oldCard.remove();
+    }
+  };
+
+  const showCard = (pin) => {
+    const id = pin.dataset.id;
+    const fragment = document.createDocumentFragment();
+    const newCard = window.card.create(pinsArray[id], id);
+    fragment.appendChild(newCard);
+    map.insertBefore(fragment, filter);
+  };
+
+  const hideCard = () => {
+    const card = document.querySelector(`.map__card`);
+    card.remove();
+  };
+
+  const onCloseButtonClick = () => {
+    removeEventListenerToHideCard();
+    hideCard();
+  };
+
+  const onEscKeydown = (evt) => {
+    const isEscape = evt.key === `Escape`;
+    if (isEscape) {
+      evt.preventDefault();
+      removeEventListenerToHideCard();
+      hideCard();
+    }
+  };
+
+  const addEventListenerToHideCard = () => {
+    const closeButton = document.querySelector(`.popup__close`);
+    closeButton.addEventListener(`click`, onCloseButtonClick);
+    document.addEventListener(`keydown`, onEscKeydown);
+  };
+
+  const removeEventListenerToHideCard = () => {
+    const closeButton = document.querySelector(`.popup__close`);
+    closeButton.removeEventListener(`click`, onCloseButtonClick);
+    document.removeEventListener(`keydown`, onEscKeydown);
+  };
+
+  const openCard = (pin) => {
+    removeOldCard();
+    showCard(pin);
+    addEventListenerToHideCard();
+  };
+
   const onPinSectionClick = (evt) => {
     const pin = evt.target.closest(`.map__pin:not(.map__pin--main)`);
     const card = document.querySelector(`.map__card.popup`);
     if (pin && !card) {
-      window.card.open(pin);
+      openCard(pin);
     }
   };
 
@@ -103,10 +155,10 @@
 
   const setMoveValue = (evt) => {
     let shift = {
-      x: startCoords.x - evt.clientX,
-      y: startCoords.y - evt.clientY
+      x: startCoordinates.x - evt.clientX,
+      y: startCoordinates.y - evt.clientY
     };
-    startCoords = {
+    startCoordinates = {
       x: evt.clientX,
       y: evt.clientY
     };
@@ -133,7 +185,7 @@
       switch (evt.button) {
         case RIGHT_BUTTON:
           evt.preventDefault();
-          startCoords = {
+          startCoordinates = {
             x: evt.clientX,
             y: evt.clientY
           };
@@ -150,7 +202,8 @@
     mainPin.addEventListener(`mousedown`, onMouseDown);
   };
 
-  const activate = () => {
+  const activate = (pins) => {
+    pinsArray = pins;
     convertFieldsToDisabled();
     addId();
     addListenerToActivatePage();
