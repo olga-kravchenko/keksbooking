@@ -8,6 +8,14 @@
   const MAX_MAP_HEIGHT = 630;
   const RIGHT_BUTTON = 0;
 
+  const TypeApartment = {
+    BUNGALOW: `bungalow`,
+    FLAT: `flat`,
+    HOUSE: `house`,
+    PALACE: `palace`,
+    ANY: `any`,
+  };
+
   const map = document.querySelector(`.map`);
   const mainPin = map.querySelector(`.map__pin--main`);
   const pinsSection = map.querySelector(`.map__pins`);
@@ -15,6 +23,8 @@
   const form = document.querySelector(`.ad-form`);
   const activeFields = form.querySelectorAll(`.ad-form input, .ad-form select, .ad-form textarea, .ad-form button`);
   const addressInput = form.querySelector(`#address`);
+  const filtersForm = document.querySelector(`.map__filters`);
+  const housingType = filtersForm.querySelector(`#housing-type`);
 
   let currentCoordinateLeft = 570;
   let currentCoordinateTop = 375;
@@ -47,13 +57,44 @@
     mainPin.addEventListener(`mousedown`, onMainPinMouseDown);
   };
 
-  const fillDomElementsByPin = () => {
+  const renderPins = () => {
     const fragment = document.createDocumentFragment();
-    for (let i = 0; i < pinsArray.length; i++) {
+    for (let i = 0; i < 5; i++) {
       const newPin = window.pin.create(pinsArray[i]);
       fragment.appendChild(newPin);
     }
     pinsSection.appendChild(fragment);
+  };
+
+  const appendHouseType = (type) => {
+    removeOldPins();
+    window.card.remove();
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < pinsArray.length; i++) {
+      const pin = pinsArray[i];
+      if (pin.offer.type === type) {
+        const newPin = window.pin.create(pin);
+        fragment.appendChild(newPin);
+      }
+    }
+    pinsSection.appendChild(fragment);
+  };
+
+  const onHousingTypeChange = () => {
+    if (housingType.value === TypeApartment.ANY) {
+      removeOldPins();
+      window.card.remove();
+      renderPins();
+    } else {
+      switch (housingType.value) {
+        case TypeApartment.FLAT:
+        case TypeApartment.HOUSE:
+        case TypeApartment.PALACE:
+        case TypeApartment.BUNGALOW:
+          appendHouseType(housingType.value);
+          break;
+      }
+    }
   };
 
   const onPinSectionClick = (evt) => {
@@ -89,7 +130,7 @@
 
   const activatePage = () => {
     convertPageToActive();
-    fillDomElementsByPin();
+    renderPins();
     addListenerOnPinSection();
     setAddressValue();
   };
@@ -171,6 +212,7 @@
     mainPin.addEventListener(`mousedown`, onMainPinMouseDown);
     mainPin.addEventListener(`keydown`, onEnterKeydown);
     mainPin.addEventListener(`mousedown`, onMouseDown);
+    housingType.addEventListener(`change`, onHousingTypeChange);
   };
 
   const activate = (pins) => {

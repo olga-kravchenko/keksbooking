@@ -1,6 +1,13 @@
 'use strict';
 
 (() => {
+  const ApartmentNames = {
+    'palace': `Дворец`,
+    'flat': `Квартира`,
+    'house': `Дом`,
+    'bungalow': `Бунгало`
+  };
+
   const map = document.querySelector(`.map`);
   const filter = map.querySelector(`.map__filters-container`);
   const cardTemplate = document.querySelector(`#card`).content;
@@ -37,7 +44,7 @@
     newCard.querySelector(`.popup__title`).textContent = advertisement.offer.title;
     newCard.querySelector(`.popup__text--address`).textContent = advertisement.offer.address;
     newCard.querySelector(`.popup__text--price`).textContent = `${advertisement.offer.price}₽/ночь`;
-    newCard.querySelector(`.popup__type`).textContent = advertisement.offer.type;
+    newCard.querySelector(`.popup__type`).textContent = ApartmentNames[advertisement.offer.type];
     newCard.querySelector(`.popup__text--capacity`).textContent = `${advertisement.offer.rooms} комнаты для ${advertisement.offer.guests} гостей`;
     newCard.querySelector(`.popup__text--time`).textContent = `Заезд после ${advertisement.offer.checkin}, выезд до ${advertisement.offer.checkout}`;
     addFeatures(newCard, advertisement);
