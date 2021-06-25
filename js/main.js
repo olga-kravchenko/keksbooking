@@ -1,7 +1,5 @@
 'use strict';
 
-(() => {
-  window.backend.get(window.map.activate, window.util.showErrorMessage);
-  window.form.activate();
+window.backend.get(window.map.activate, window.util.showErrorMessage);
+window.form.activate();
 
-})();
