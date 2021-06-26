@@ -2,6 +2,7 @@
 
 const SHIFT_PIN_X = 40;
 const SHIFT_PIN_Y = 51;
+
 const pinTemplate = document.querySelector(`#pin`).content;
 
 const create = (advertisement) => {
@@ -17,4 +18,3 @@ const create = (advertisement) => {
 window.pin = {
   create,
 };
-

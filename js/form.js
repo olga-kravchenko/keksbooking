@@ -2,7 +2,6 @@
 
 const MAX_QUANTITY_OF_ROOMS = 100;
 const MIN_QUANTITY_OF_PLACES = 0;
-const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 
 const Message = {
   NOT_ERROR: ``,
@@ -31,48 +30,14 @@ const Time = {
 };
 
 const form = document.querySelector(`.ad-form`);
-const roomQuantity = document.querySelector(`#room_number`);
-const capacityQuantity = document.querySelector(`#capacity`);
+const roomQuantity = form.querySelector(`#room_number`);
+const capacityQuantity = form.querySelector(`#capacity`);
 const type = form.querySelector(`#type`);
 const price = form.querySelector(`#price`);
 const timeIn = form.querySelector(`#timein`);
 const timeOut = form.querySelector(`#timeout`);
-const formResetButton = form.querySelector(`.ad-form__reset`);
 
-const fileChooserAvatar = form.querySelector(`#avatar`);
-const previewAvatar = form.querySelector(`.ad-form-header__upload img`);
-const fileChooserImage = form.querySelector(`#images`);
-const previewPicture = form.querySelector(`.ad-form__photo`);
-
-const reader = new FileReader();
-
-const imageChange = (fileChooser, img) => {
-  const file = fileChooser.files[0];
-  const fileName = file.name.toLowerCase();
-  const matchingTheFileType = FILE_TYPES.some((e) => fileName.endsWith(e));
-  if (matchingTheFileType) {
-    reader.addEventListener(`load`, () => {
-      img.src = reader.result;
-    });
-    reader.readAsDataURL(file);
-  }
-};
-
-const onFileChooserAvatarChange = () => {
-  imageChange(fileChooserAvatar, previewAvatar);
-};
-
-const onFileChooserImageChange = () => {
-  const picture = document.createElement(`img`);
-  picture.style.width = `40px`;
-  picture.style.height = `40px`;
-  previewPicture.appendChild(picture);
-
-  imageChange(fileChooserImage, picture);
-};
-
-
-const roomsAndPlacesValid = (evt) => {
+const validationOfRoomsAndPlaces = (evt) => {
   const rooms = +roomQuantity.value;
   const places = +capacityQuantity.value;
   let currentMessage = Message.NOT_ERROR;
@@ -131,37 +96,23 @@ const onTimeOutChange = () => {
   timeIn.value = changeTimeValue(timeOut.value);
 };
 
-const onSuccess = () => {
-  window.utilForm.showSuccessModal();
-};
-
-const onError = () => {
-  window.utilForm.showErrorModal();
-};
-
-const onFormResetButtonClick = () => {
-  form.reset();
-};
-
 const onFormSubmit = (evt) => {
-  if (roomsAndPlacesValid(evt)) {
+  if (validationOfRoomsAndPlaces(evt)) {
     evt.preventDefault();
     const formData = new FormData(form);
-    window.backend.post(formData, onSuccess, onError);
+    window.backend.post(formData, window.utilForm.showSuccessModal, window.utilForm.showErrorModal);
     window.map.deactivate();
   }
 };
 
 const addListener = () => {
-  roomQuantity.addEventListener(`change`, roomsAndPlacesValid);
-  capacityQuantity.addEventListener(`change`, roomsAndPlacesValid);
+  roomQuantity.addEventListener(`change`, validationOfRoomsAndPlaces);
+  capacityQuantity.addEventListener(`change`, validationOfRoomsAndPlaces);
   type.addEventListener(`change`, onTypeChange);
   timeIn.addEventListener(`change`, onTimeInChange);
   timeOut.addEventListener(`change`, onTimeOutChange);
-  formResetButton.addEventListener(`click`, onFormResetButtonClick);
   form.addEventListener(`submit`, onFormSubmit);
-  fileChooserAvatar.addEventListener(`change`, onFileChooserAvatarChange);
-  fileChooserImage.addEventListener(`change`, onFileChooserImageChange);
+  window.preview.addListeners();
 };
 
 const activate = () => {

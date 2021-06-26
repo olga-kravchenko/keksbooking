@@ -1,5 +1,8 @@
 'use strict';
 
-window.backend.get(window.map.activate, window.util.showErrorMessage);
+const onSuccess = window.map.activate;
+const onError = window.util.showErrorMessage;
+
+window.backend.get(onSuccess, onError);
 window.form.activate();
 

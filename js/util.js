@@ -2,10 +2,6 @@
 
 const ERROR_MODAL_DISPLAY_TIME = 3000;
 
-const getRandomNumber = (min, max) => {
-  return Math.floor(Math.random() * (max - min) + min);
-};
-
 const showErrorMessage = (errorMessage) => {
   const errorModal = document.createElement(`div`);
   errorModal.classList.add(`modal-error`);
@@ -15,6 +11,5 @@ const showErrorMessage = (errorMessage) => {
 };
 
 window.util = {
-  getRandomNumber,
   showErrorMessage,
 };
