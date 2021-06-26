@@ -2,13 +2,15 @@ const path = require(`path`);
 
 module.exports = {
   entry: [
-    `./js/constants.js`,
     `./js/backend.js`,
     `./js/util-form.js`,
     `./js/util.js`,
     `./js/pin.js`,
     `./js/card.js`,
+    `./js/filters-form.js`,
+    `./js/pin-moving.js`,
     `./js/map.js`,
+    `./js/preview.js`,
     `./js/form.js`,
     `./js/main.js`,
   ],

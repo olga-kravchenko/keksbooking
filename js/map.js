@@ -1,11 +1,5 @@
 'use strict';
 
-const PIN_HEIGHT = 87;
-const PIN_MIDDLE_WIDTH = 34;
-const MAX_MAP_WIDTH = 1200;
-const MIN_MAP_WIDTH = 270;
-const MIN_MAP_HEIGHT = 130;
-const MAX_MAP_HEIGHT = 630;
 const RIGHT_BUTTON = 0;
 const QUANTITY_SHOWN_PINS = 5;
 const FILTER_SWITCHING_TIME = 500;
@@ -14,24 +8,17 @@ const map = document.querySelector(`.map`);
 const mainPin = map.querySelector(`.map__pin--main`);
 const pinsSection = map.querySelector(`.map__pins`);
 const form = document.querySelector(`.ad-form`);
-const activeFields = form.querySelectorAll(`.ad-form input, .ad-form select, .ad-form textarea, .ad-form button`);
-const addressInput = form.querySelector(`#address`);
-
+const activeFormFields = form.querySelectorAll(`.ad-form input, .ad-form select, .ad-form textarea, .ad-form button`);
 const filtersForm = document.querySelector(`.map__filters`);
-const housingType = filtersForm.querySelector(`#housing-type`);
-const housingPrice = filtersForm.querySelector(`#housing-price`);
-const housingRooms = filtersForm.querySelector(`#housing-rooms`);
-const housingGuests = filtersForm.querySelector(`#housing-guests`);
-const housingFeatures = filtersForm.querySelector(`#housing-features`);
+const activeFiltersFormFields = filtersForm.querySelectorAll(`.map__filters select, .map__filters input`);
+const formResetButton = form.querySelector(`.ad-form__reset`);
 
-let currentCoordinateLeft = 570;
-let currentCoordinateTop = 375;
-let startCoordinates;
 let pinsArray;
 let lastTimeout;
 
 const convertFieldsToDisabled = () => {
-  activeFields.forEach((field) => field.setAttribute(`disabled`, `disabled`));
+  activeFormFields.forEach((field) => field.setAttribute(`disabled`, `disabled`));
+  activeFiltersFormFields.forEach((field) => field.setAttribute(`disabled`, `disabled`));
 };
 
 const addId = () => {
@@ -44,14 +31,15 @@ const addId = () => {
 const convertPageToActive = () => {
   map.classList.remove(`map--faded`);
   form.classList.remove(`ad-form--disabled`);
-  activeFields.forEach((field) => field.removeAttribute(`disabled`));
+  activeFormFields.forEach((field) => field.removeAttribute(`disabled`));
+  activeFiltersFormFields.forEach((field) => field.removeAttribute(`disabled`));
   mainPin.removeEventListener(`mousedown`, onMainPinMouseDown);
 };
 
 const convertPageToDeactivate = () => {
   map.classList.add(`map--faded`);
   form.classList.add(`ad-form--disabled`);
-  activeFields.forEach((field) => field.setAttribute(`disabled`, `disabled`));
+  activeFormFields.forEach((field) => field.setAttribute(`disabled`, `disabled`));
   form.reset();
   filtersForm.reset();
   mainPin.addEventListener(`mousedown`, onMainPinMouseDown);
@@ -69,109 +57,37 @@ const renderPins = (pins) => {
   pinsSection.appendChild(fragment);
 };
 
-const checkPrice = (pins) => {
-  const priceValue = housingPrice.value;
-  if (priceValue !== `any`) {
-    pins = pins.filter((e) => {
-      if (priceValue === `middle`) {
-        return e.offer.price > 10000 || e.offer.price < 50000;
-      } else if (priceValue === `low`) {
-        return e.offer.price < 10000;
-      } else {
-        return e.offer.price > 50000;
-      }
-    });
-  }
-  return pins;
-};
-
-const checkPlace = (pins) => {
-  const typeValue = housingType.value;
-  if (typeValue !== `any`) {
-    pins = pins.filter((e) => e.offer.type === typeValue);
-  }
-  return pins;
-};
-
-const checkRooms = (pins) => {
-  const roomsValue = housingRooms.value;
-  if (roomsValue !== `any`) {
-    pins = pins.filter((e) => {
-      if (roomsValue === `1`) {
-        return e.offer.rooms === 1;
-      } else if (roomsValue === `2`) {
-        return e.offer.rooms === 2;
-      } else {
-        return e.offer.rooms === 3;
-      }
-    });
-  }
-  return pins;
-};
-
-const checkGuests = (pins) => {
-  const guestsValue = housingGuests.value;
-  if (guestsValue !== `any`) {
-    pins = pins.filter((e) => {
-      if (guestsValue === `1`) {
-        return e.offer.guests === 1;
-      } else if (guestsValue === `2`) {
-        return e.offer.guests === 2;
-      } else {
-        return e.offer.guests === 0;
-      }
-    });
-  }
-  return pins;
-};
-
-const checkCheckbox = (pins) => {
-  const checkboxes = Array.from(housingFeatures.querySelectorAll(`.map__checkbox:checked`))
-    .map((e) => e.value);
-
-  if (checkboxes.length > 0) {
-    pins = pins.filter((e) => {
-      return checkboxes.every((checked) => e.offer.features.indexOf(checked) !== -1);
-    });
-  }
-  return pins;
-};
-
-const getFilteredData = () => {
-  let filteredPins = [...pinsArray];
-  filteredPins = checkPrice(filteredPins);
-  filteredPins = checkPlace(filteredPins);
-  filteredPins = checkRooms(filteredPins);
-  filteredPins = checkGuests(filteredPins);
-  filteredPins = checkCheckbox(filteredPins);
-  return filteredPins;
-};
-
 const debounce = () => {
   if (lastTimeout) {
     window.clearTimeout(lastTimeout);
   }
   lastTimeout = window.setTimeout(() => {
-    const filteredPins = getFilteredData();
+    const filteredPins = window.filtersForm.getData(pinsArray);
     renderPins(filteredPins);
   }, FILTER_SWITCHING_TIME);
 };
 
-const onSectionChange = () => {
-  debounce();
+const removeActivePin = () => {
+  const activePin = document.querySelector(`.map__pin--active`);
+  if (activePin) {
+    activePin.classList.remove(`map__pin--active`);
+  }
+};
+
+const showActiveAdvertisement = (evt) => {
+  const pin = evt.target.closest(`.map__pin[type=button]:not(.map__overlay)`);
+  pin.classList.add(`map__pin--active`);
+  window.card.expand(pin, pinsArray);
 };
 
 const onPinSectionClick = (evt) => {
   const pin = evt.target.closest(`.map__pin[type=button]:not(.map__overlay)`);
   const card = document.querySelector(`.map__card.popup`);
-  if (pin && !card) {
-    window.card.open(pin, pinsArray);
-  } else {
-    if (card && pin) {
-      if (card.dataset !== pin.dataset) {
-        window.card.open(pin, pinsArray);
-      }
-    }
+  const isID = (card && pin && card.dataset.id !== pin.dataset.id);
+  const isCardDontOpen = (pin && !card);
+  if (isCardDontOpen || isID) {
+    removeActivePin();
+    showActiveAdvertisement(evt);
   }
 };
 
@@ -188,15 +104,11 @@ const addListenerOnPinSection = () => {
   pinsSection.addEventListener(`click`, onPinSectionClick);
 };
 
-const setAddressValue = () => {
-  addressInput.value = `${currentCoordinateLeft + PIN_MIDDLE_WIDTH}, ${currentCoordinateTop + PIN_HEIGHT}`;
-};
-
 const activatePage = () => {
   convertPageToActive();
+  window.pinMoving.setAddressValue();
   renderPins(pinsArray);
   addListenerOnPinSection();
-  setAddressValue();
 };
 
 const onMainPinMouseDown = (evt) => {
@@ -217,70 +129,20 @@ const onEnterKeydown = (evt) => {
   }
 };
 
-const checkCoordinate = () => {
-  currentCoordinateTop = currentCoordinateTop > MAX_MAP_HEIGHT ? MAX_MAP_HEIGHT : currentCoordinateTop;
-  currentCoordinateTop = currentCoordinateTop < MIN_MAP_HEIGHT ? MIN_MAP_HEIGHT : currentCoordinateTop;
-  currentCoordinateLeft = currentCoordinateLeft > (MAX_MAP_WIDTH - PIN_MIDDLE_WIDTH) ? (MAX_MAP_WIDTH - PIN_MIDDLE_WIDTH) : currentCoordinateLeft;
-  currentCoordinateLeft = currentCoordinateLeft < MIN_MAP_WIDTH ? MIN_MAP_WIDTH : currentCoordinateLeft;
-};
-
-const setPinPosition = () => {
-  mainPin.style.top = `${currentCoordinateTop}px`;
-  mainPin.style.left = `${currentCoordinateLeft}px`;
-};
-
-const setMoveValue = (evt) => {
-  let shift = {
-    x: startCoordinates.x - evt.clientX,
-    y: startCoordinates.y - evt.clientY
-  };
-  startCoordinates = {
-    x: evt.clientX,
-    y: evt.clientY
-  };
-  currentCoordinateLeft = mainPin.offsetLeft - shift.x;
-  currentCoordinateTop = mainPin.offsetTop - shift.y;
-};
-
-const onMouseMove = (evt) => {
-  evt.preventDefault();
-  setMoveValue(evt);
-  checkCoordinate();
-  setPinPosition();
-  setAddressValue();
-};
-
-const onMouseUp = (evt) => {
-  evt.preventDefault();
-  document.removeEventListener(`mousemove`, onMouseMove);
-  document.removeEventListener(`mouseup`, onMouseUp);
-};
-
-const onMouseDown = (evt) => {
-  if (typeof evt === `object`) {
-    switch (evt.button) {
-      case RIGHT_BUTTON:
-        evt.preventDefault();
-        startCoordinates = {
-          x: evt.clientX,
-          y: evt.clientY
-        };
-        document.addEventListener(`mousemove`, onMouseMove);
-        document.addEventListener(`mouseup`, onMouseUp);
-        break;
-    }
-  }
+const onFormResetButtonClick = () => {
+  form.reset();
+  filtersForm.reset();
+  renderPins(pinsArray);
+  window.preview.reset();
+  window.pinMoving.resetPosition();
 };
 
 const addListenerToActivatePage = () => {
   mainPin.addEventListener(`mousedown`, onMainPinMouseDown);
   mainPin.addEventListener(`keydown`, onEnterKeydown);
-  mainPin.addEventListener(`mousedown`, onMouseDown);
-  housingType.addEventListener(`change`, onSectionChange);
-  housingPrice.addEventListener(`change`, onSectionChange);
-  housingRooms.addEventListener(`change`, onSectionChange);
-  housingGuests.addEventListener(`change`, onSectionChange);
-  housingFeatures.addEventListener(`change`, onSectionChange);
+  window.pinMoving.addListener();
+  window.filtersForm.addListeners();
+  formResetButton.addEventListener(`click`, onFormResetButtonClick);
 };
 
 const activate = (pins) => {
@@ -291,16 +153,17 @@ const activate = (pins) => {
 };
 
 const deactivate = () => {
-  currentCoordinateLeft = 570;
-  currentCoordinateTop = 375;
-  setPinPosition();
+  window.pinMoving.resetPosition();
   convertPageToDeactivate();
   removeOldPins();
   window.card.remove();
+  window.preview.reset();
 };
 
 window.map = {
   activate,
   deactivate,
-  setAddressValue,
+  debounce,
+  renderPins,
+  removeActivePin,
 };
