@@ -2,6 +2,7 @@
 
 const MAX_QUANTITY_OF_ROOMS = 100;
 const MIN_QUANTITY_OF_PLACES = 0;
+const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 
 const Message = {
   NOT_ERROR: ``,
@@ -38,10 +39,43 @@ const timeIn = form.querySelector(`#timein`);
 const timeOut = form.querySelector(`#timeout`);
 const formResetButton = form.querySelector(`.ad-form__reset`);
 
+const fileChooserAvatar = form.querySelector(`#avatar`);
+const previewAvatar = form.querySelector(`.ad-form-header__upload img`);
+const fileChooserImage = form.querySelector(`#images`);
+const previewPicture = form.querySelector(`.ad-form__photo`);
+
+const reader = new FileReader();
+
+const imageChange = (fileChooser, img) => {
+  const file = fileChooser.files[0];
+  const fileName = file.name.toLowerCase();
+  const matchingTheFileType = FILE_TYPES.some((e) => fileName.endsWith(e));
+  if (matchingTheFileType) {
+    reader.addEventListener(`load`, () => {
+      img.src = reader.result;
+    });
+    reader.readAsDataURL(file);
+  }
+};
+
+const onFileChooserAvatarChange = () => {
+  imageChange(fileChooserAvatar, previewAvatar);
+};
+
+const onFileChooserImageChange = () => {
+  const picture = document.createElement(`img`);
+  picture.style.width = `40px`;
+  picture.style.height = `40px`;
+  previewPicture.appendChild(picture);
+
+  imageChange(fileChooserImage, picture);
+};
+
+
 const roomsAndPlacesValid = (evt) => {
   const rooms = +roomQuantity.value;
   const places = +capacityQuantity.value;
-  let currentMessage = window.constants.EMPTY_STRING;
+  let currentMessage = Message.NOT_ERROR;
   if (rooms === MAX_QUANTITY_OF_ROOMS && places !== MIN_QUANTITY_OF_PLACES
     || places === MIN_QUANTITY_OF_PLACES && rooms !== MAX_QUANTITY_OF_ROOMS) {
     currentMessage = Message.TOO_MANY_ROOMS;
@@ -126,6 +160,8 @@ const addListener = () => {
   timeOut.addEventListener(`change`, onTimeOutChange);
   formResetButton.addEventListener(`click`, onFormResetButtonClick);
   form.addEventListener(`submit`, onFormSubmit);
+  fileChooserAvatar.addEventListener(`change`, onFileChooserAvatarChange);
+  fileChooserImage.addEventListener(`change`, onFileChooserImageChange);
 };
 
 const activate = () => {

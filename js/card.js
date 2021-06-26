@@ -55,9 +55,9 @@ const create = (advertisement, id) => {
 };
 
 const remove = () => {
-  const oldCard = document.querySelector(`.map__card.popup`);
-  if (oldCard) {
-    oldCard.remove();
+  const card = document.querySelector(`.map__card.popup`);
+  if (card) {
+    card.remove();
   }
 };
 

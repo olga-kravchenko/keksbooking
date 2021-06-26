@@ -13,10 +13,10 @@ const FILTER_SWITCHING_TIME = 500;
 const map = document.querySelector(`.map`);
 const mainPin = map.querySelector(`.map__pin--main`);
 const pinsSection = map.querySelector(`.map__pins`);
-
 const form = document.querySelector(`.ad-form`);
 const activeFields = form.querySelectorAll(`.ad-form input, .ad-form select, .ad-form textarea, .ad-form button`);
 const addressInput = form.querySelector(`#address`);
+
 const filtersForm = document.querySelector(`.map__filters`);
 const housingType = filtersForm.querySelector(`#housing-type`);
 const housingPrice = filtersForm.querySelector(`#housing-price`);
@@ -36,8 +36,8 @@ const convertFieldsToDisabled = () => {
 
 const addId = () => {
   for (let i = 0; i < pinsArray.length; i++) {
-    const pinsAdv = pinsArray[i];
-    pinsAdv.id = i;
+    const pins = pinsArray[i];
+    pins.id = i;
   }
 };
 
@@ -61,8 +61,8 @@ const renderPins = (pins) => {
   removeOldPins();
   window.card.remove();
   const fragment = document.createDocumentFragment();
-  const filterByQuantity = pins.length > QUANTITY_SHOWN_PINS ? QUANTITY_SHOWN_PINS : pins.length;
-  for (let i = 0; i < filterByQuantity; i++) {
+  const displayedPins = pins.length > QUANTITY_SHOWN_PINS ? QUANTITY_SHOWN_PINS : pins.length;
+  for (let i = 0; i < displayedPins; i++) {
     const newPin = window.pin.create(pins[i]);
     fragment.appendChild(newPin);
   }
