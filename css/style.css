@@ -129,6 +129,7 @@ fieldset {
   font-weight: 700;
   text-align: center;
   color: #ffffff;
+  opacity: 0;
 }
 
 .map--faded .map__overlay {
@@ -199,6 +200,7 @@ fieldset {
 }
 
 .map__pin--main {
+  display: none;
   width: 65px;
   height: 65px;
 

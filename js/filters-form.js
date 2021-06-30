@@ -21,15 +21,15 @@ const QuantityOfGuests = {
   TWO: `2`,
 };
 
-const filtersForm = document.querySelector(`.map__filters`);
-const housingType = filtersForm.querySelector(`#housing-type`);
-const housingPrice = filtersForm.querySelector(`#housing-price`);
-const housingRooms = filtersForm.querySelector(`#housing-rooms`);
-const housingGuests = filtersForm.querySelector(`#housing-guests`);
-const housingFeatures = filtersForm.querySelector(`#housing-features`);
+const filtersForm = $(`.map__filters`);
+const housingType = filtersForm.find(`#housing-type`);
+const housingPrice = filtersForm.find(`#housing-price`);
+const housingRooms = filtersForm.find(`#housing-rooms`);
+const housingGuests = filtersForm.find(`#housing-guests`);
+const housingFeatures = filtersForm.find(`#housing-features`);
 
 const checkPrice = (pins) => {
-  const priceValue = housingPrice.value;
+  const priceValue = housingPrice.val();
   if (priceValue !== ANY_VALUE) {
     pins = pins.filter((e) => {
       switch (priceValue) {
@@ -46,7 +46,7 @@ const checkPrice = (pins) => {
 };
 
 const checkPlace = (pins) => {
-  const typeValue = housingType.value;
+  const typeValue = housingType.val();
   if (typeValue !== ANY_VALUE) {
     pins = pins.filter((e) => e.offer.type === typeValue);
   }
@@ -54,7 +54,7 @@ const checkPlace = (pins) => {
 };
 
 const checkRooms = (pins) => {
-  const roomsValue = housingRooms.value;
+  const roomsValue = housingRooms.val();
   if (roomsValue !== ANY_VALUE) {
     pins = pins.filter((e) => {
       switch (roomsValue) {
@@ -71,7 +71,7 @@ const checkRooms = (pins) => {
 };
 
 const checkGuests = (pins) => {
-  const guestsValue = housingGuests.value;
+  const guestsValue = housingGuests.val();
   if (guestsValue !== ANY_VALUE) {
     pins = pins.filter((e) => {
       switch (guestsValue) {
@@ -88,7 +88,7 @@ const checkGuests = (pins) => {
 };
 
 const checkCheckbox = (pins) => {
-  const checkedFeatures = housingFeatures.querySelectorAll(`.map__checkbox:checked`);
+  const checkedFeatures = housingFeatures.find(`.map__checkbox:checked`);
   const features = Array.from(checkedFeatures).map((e) => e.value);
   if (features.length > 0) {
     pins = pins.filter((e) => features.every((checked) => e.offer.features.indexOf(checked) !== -1));
@@ -111,11 +111,11 @@ const onSectionChange = () => {
 };
 
 const addListeners = () => {
-  housingType.addEventListener(`change`, onSectionChange);
-  housingPrice.addEventListener(`change`, onSectionChange);
-  housingRooms.addEventListener(`change`, onSectionChange);
-  housingGuests.addEventListener(`change`, onSectionChange);
-  housingFeatures.addEventListener(`change`, onSectionChange);
+  housingType.on(`change`, onSectionChange);
+  housingPrice.on(`change`, onSectionChange);
+  housingRooms.on(`change`, onSectionChange);
+  housingGuests.on(`change`, onSectionChange);
+  housingFeatures.on(`change`, onSectionChange);
 };
 
 window.filtersForm = {
