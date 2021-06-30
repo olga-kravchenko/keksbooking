@@ -29,17 +29,17 @@ const Time = {
   FOURTEEN: `14:00`,
 };
 
-const form = document.querySelector(`.ad-form`);
-const roomQuantity = form.querySelector(`#room_number`);
-const capacityQuantity = form.querySelector(`#capacity`);
-const type = form.querySelector(`#type`);
-const price = form.querySelector(`#price`);
-const timeIn = form.querySelector(`#timein`);
-const timeOut = form.querySelector(`#timeout`);
+const form = $(`.ad-form`);
+const roomQuantity = form.find(`#room_number`);
+const capacityQuantity = form.find(`#capacity`);
+const type = form.find(`#type`);
+const price = form.find(`#price`);
+const timeIn = form.find(`#timein`);
+const timeOut = form.find(`#timeout`);
 
 const validationOfRoomsAndPlaces = (evt) => {
-  const rooms = +roomQuantity.value;
-  const places = +capacityQuantity.value;
+  const rooms = +roomQuantity.val();
+  const places = +capacityQuantity.val();
   let currentMessage = Message.NOT_ERROR;
   if (rooms === MAX_QUANTITY_OF_ROOMS && places !== MIN_QUANTITY_OF_PLACES
     || places === MIN_QUANTITY_OF_PLACES && rooms !== MAX_QUANTITY_OF_ROOMS) {
@@ -50,14 +50,14 @@ const validationOfRoomsAndPlaces = (evt) => {
   if (currentMessage) {
     evt.preventDefault();
   }
-  roomQuantity.setCustomValidity(currentMessage);
-  roomQuantity.reportValidity();
+  roomQuantity[0].setCustomValidity(currentMessage);
+  roomQuantity[0].reportValidity();
   return Boolean(!currentMessage);
 };
 
 const onTypeChange = () => {
   let minPrice = MinPriceValue.BUNGALOW;
-  switch (type.value) {
+  switch (type.val()) {
     case TypeApartment.FLAT:
       minPrice = MinPriceValue.FLAT;
       break;
@@ -68,8 +68,8 @@ const onTypeChange = () => {
       minPrice = MinPriceValue.PALACE;
       break;
   }
-  price.min = minPrice;
-  price.placeholder = minPrice;
+  price.attr(`min`, minPrice);
+  price.attr(`placeholder`, minPrice);
 };
 
 const changeTimeValue = (firstSelectValue) => {
@@ -89,29 +89,29 @@ const changeTimeValue = (firstSelectValue) => {
 };
 
 const onTimeInChange = () => {
-  timeOut.value = changeTimeValue(timeIn.value);
+  timeOut.val(changeTimeValue(timeIn.value));
 };
 
 const onTimeOutChange = () => {
-  timeIn.value = changeTimeValue(timeOut.value);
+  timeIn.val(changeTimeValue(timeOut.value));
 };
 
 const onFormSubmit = (evt) => {
   if (validationOfRoomsAndPlaces(evt)) {
     evt.preventDefault();
-    const formData = new FormData(form);
+    const formData = new FormData(form[0]);
     window.backend.post(formData, window.utilForm.showSuccessModal, window.utilForm.showErrorModal);
     window.map.deactivate();
   }
 };
 
 const addListener = () => {
-  roomQuantity.addEventListener(`change`, validationOfRoomsAndPlaces);
-  capacityQuantity.addEventListener(`change`, validationOfRoomsAndPlaces);
-  type.addEventListener(`change`, onTypeChange);
-  timeIn.addEventListener(`change`, onTimeInChange);
-  timeOut.addEventListener(`change`, onTimeOutChange);
-  form.addEventListener(`submit`, onFormSubmit);
+  roomQuantity.on(`change`, validationOfRoomsAndPlaces);
+  capacityQuantity.on(`change`, validationOfRoomsAndPlaces);
+  type.on(`change`, onTypeChange);
+  timeIn.on(`change`, onTimeInChange);
+  timeOut.on(`change`, onTimeOutChange);
+  form.on(`submit`, onFormSubmit);
   window.preview.addListeners();
 };
 
