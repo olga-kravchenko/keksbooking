@@ -2,17 +2,17 @@ const path = require(`path`);
 
 module.exports = {
   entry: [
-    `./js/backend.js`,
-    `./js/util-form.js`,
-    `./js/util.js`,
-    `./js/pin.js`,
-    `./js/card.js`,
-    `./js/filters-form.js`,
-    `./js/pin-moving.js`,
-    `./js/map.js`,
-    `./js/preview.js`,
-    `./js/form.js`,
-    `./js/main.js`,
+    `./js/modules/backend.js`,
+    `./js/modules/util-form.js`,
+    `./js/modules/util.js`,
+    `./js/modules/pin.js`,
+    `./js/modules/card.js`,
+    `./js/modules/filters-form.js`,
+    `./js/modules/pin-moving.js`,
+    `./js/modules/map.js`,
+    `./js/modules/preview.js`,
+    `./js/modules/form.js`,
+    `./js/modules/main.js`,
   ],
   output: {
     filename: `bundle.js`,

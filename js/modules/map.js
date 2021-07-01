@@ -8,9 +8,7 @@ const map = $(`.map`);
 const mainPin = map.find(`.map__pin--main`);
 const pinsSection = map.find(`.map__pins`);
 const form = $(`.ad-form`);
-const activeFormFields = form.find(`.ad-form input, .ad-form select, .ad-form textarea, .ad-form button`);
 const filtersForm = $(`.map__filters`);
-const activeFiltersFormFields = filtersForm.find(`.map__filters select, .map__filters input`);
 const formResetButton = form.find(`.ad-form__reset`);
 
 let pinsArray;
@@ -19,8 +17,6 @@ let lastTimeout;
 const convertFieldsToDisabled = () => {
   $(`.ad-form :input`).prop(`disabled`, true);
   $(`.map__filters :input`).prop(`disabled`, true);
-  // activeFormFields.attr(`disabled`, true);
-  // activeFiltersFormFields.attr(`disabled`, true);
 };
 
 const addId = () => {
@@ -41,7 +37,6 @@ const convertPageToActive = () => {
 const convertPageToDeactivate = () => {
   map.addClass(`map--faded`);
   form.addClass(`ad-form--disabled`);
-  activeFormFields.each((field) => field.attr(`disabled`, `disabled`));
   form[0].reset();
   filtersForm[0].reset();
   mainPin.on(`mousedown`, onMainPinMouseDown);
@@ -83,7 +78,7 @@ const showActiveAdvertisement = (evt) => {
 };
 
 const onPinSectionClick = (evt) => {
-  const pin = $(evt.target).closest(`.map__pin[type=button]:not(.map__overlay)`);
+  const pin = $(evt.target).closest(`.map__pin:not(.map__pin--main)`);
   const isOverlay = $(evt.target).hasClass(`map__overlay`);
   const card = $(`.map__card.popup`);
   const isID = (card && pin && card.data(`id`) !== pin.data(`id`));
