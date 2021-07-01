@@ -89,11 +89,12 @@ const changeTimeValue = (firstSelectValue) => {
 };
 
 const onTimeInChange = () => {
-  timeOut.val(changeTimeValue(timeIn.value));
+
+  timeOut.val(changeTimeValue(timeIn.val()));
 };
 
 const onTimeOutChange = () => {
-  timeIn.val(changeTimeValue(timeOut.value));
+  timeIn.val(changeTimeValue(timeOut.val()));
 };
 
 const onFormSubmit = (evt) => {

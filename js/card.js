@@ -62,9 +62,9 @@ const remove = () => {
 };
 
 const show = (pin, pinsArray) => {
-  const id = pin.dataset.id;
+  const id = pin.data(`id`);
   const fragment = document.createDocumentFragment();
-  const newCard = window.card.create(pinsArray[id], id);
+  const newCard = create(pinsArray[id], id);
   fragment.appendChild(newCard);
   map.insertBefore(fragment, filterContainer);
 };

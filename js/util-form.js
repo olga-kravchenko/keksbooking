@@ -1,34 +1,34 @@
 'use strict';
 
-const main = document.querySelector(`main`);
-const successModalTemplate = document.querySelector(`#success`).content;
-const errorModalTemplate = document.querySelector(`#error`).content;
+const main = $(`main`);
+const successModalTemplate = $(`#success`).contents();
+const errorModalTemplate = $(`#error`).contents();
 
 const renderSuccessModal = () => {
-  const modalSuccess = successModalTemplate.cloneNode(true);
-  main.appendChild(modalSuccess);
+  const modalSuccess = successModalTemplate.clone();
+  main.append(modalSuccess);
   return modalSuccess;
 };
 
 const onSuccessClose = (evt) => {
   evt.preventDefault();
-  document.querySelector(`.success`).remove();
+  $(`.success`).remove();
 };
 
 const renderErrorModal = () => {
-  const modalError = errorModalTemplate.cloneNode(true);
-  main.appendChild(modalError);
+  const modalError = errorModalTemplate.clone();
+  main.append(modalError);
   return modalError;
 };
 
 const onErrorClose = (evt) => {
   evt.preventDefault();
-  document.querySelector(`.error`).remove();
+  $(`.error`).remove();
 };
 
 const onEscapeKeydown = (evt) => {
-  const success = main.querySelector(`.success`);
-  const error = main.querySelector(`.error`);
+  const success = main.find(`.success`);
+  const error = main.find(`.error`);
   if (evt.key === `Escape` && success) {
     onSuccessClose(evt);
   } else if (evt.key === `Escape` && error) {
@@ -37,8 +37,8 @@ const onEscapeKeydown = (evt) => {
 };
 
 const onDocumentClick = (evt) => {
-  const success = main.querySelector(`.success`);
-  const error = main.querySelector(`.error`);
+  const success = main.find(`.success`);
+  const error = main.find(`.error`);
   if (evt.target === success) {
     onSuccessClose(evt);
   } else if (evt.target === error) {
@@ -48,19 +48,19 @@ const onDocumentClick = (evt) => {
 
 const onErrorButtonClick = (evt) => {
   evt.preventDefault();
-  document.querySelector(`.error`).remove();
+  $(`.error`).remove();
 };
 
 const addListenersOnSuccess = () => {
-  document.addEventListener(`click`, onDocumentClick);
-  document.addEventListener(`keydown`, onEscapeKeydown);
+  $(document).on(`click`, onDocumentClick);
+  $(document).on(`keydown`, onEscapeKeydown);
 };
 
 const addListenersOnError = () => {
   const errorButton = main.querySelector(`.error__button`);
-  errorButton.addEventListener(`click`, onErrorButtonClick);
-  document.addEventListener(`click`, onDocumentClick);
-  document.addEventListener(`keydown`, onEscapeKeydown);
+  errorButton.on(`click`, onErrorButtonClick);
+  $(document).on(`click`, onDocumentClick);
+  $(document).on(`keydown`, onEscapeKeydown);
 };
 
 const showSuccessModal = () => {

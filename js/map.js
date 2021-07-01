@@ -4,21 +4,23 @@ const RIGHT_BUTTON = 0;
 const QUANTITY_SHOWN_PINS = 5;
 const FILTER_SWITCHING_TIME = 500;
 
-const map = document.querySelector(`.map`);
-const mainPin = map.querySelector(`.map__pin--main`);
-const pinsSection = map.querySelector(`.map__pins`);
-const form = document.querySelector(`.ad-form`);
-const activeFormFields = form.querySelectorAll(`.ad-form input, .ad-form select, .ad-form textarea, .ad-form button`);
-const filtersForm = document.querySelector(`.map__filters`);
-const activeFiltersFormFields = filtersForm.querySelectorAll(`.map__filters select, .map__filters input`);
-const formResetButton = form.querySelector(`.ad-form__reset`);
+const map = $(`.map`);
+const mainPin = map.find(`.map__pin--main`);
+const pinsSection = map.find(`.map__pins`);
+const form = $(`.ad-form`);
+const activeFormFields = form.find(`.ad-form input, .ad-form select, .ad-form textarea, .ad-form button`);
+const filtersForm = $(`.map__filters`);
+const activeFiltersFormFields = filtersForm.find(`.map__filters select, .map__filters input`);
+const formResetButton = form.find(`.ad-form__reset`);
 
 let pinsArray;
 let lastTimeout;
 
 const convertFieldsToDisabled = () => {
-  activeFormFields.forEach((field) => field.setAttribute(`disabled`, `disabled`));
-  activeFiltersFormFields.forEach((field) => field.setAttribute(`disabled`, `disabled`));
+  $(`.ad-form :input`).prop(`disabled`, true);
+  $(`.map__filters :input`).prop(`disabled`, true);
+  // activeFormFields.attr(`disabled`, true);
+  // activeFiltersFormFields.attr(`disabled`, true);
 };
 
 const addId = () => {
@@ -29,32 +31,32 @@ const addId = () => {
 };
 
 const convertPageToActive = () => {
-  map.classList.remove(`map--faded`);
-  form.classList.remove(`ad-form--disabled`);
-  activeFormFields.forEach((field) => field.removeAttribute(`disabled`));
-  activeFiltersFormFields.forEach((field) => field.removeAttribute(`disabled`));
-  mainPin.removeEventListener(`mousedown`, onMainPinMouseDown);
+  map.removeClass(`map--faded`);
+  form.removeClass(`ad-form--disabled`);
+  $(`.ad-form :input`).prop(`disabled`, false);
+  $(`.map__filters :input`).prop(`disabled`, false);
+  mainPin.off(`mousedown`, onMainPinMouseDown);
 };
 
 const convertPageToDeactivate = () => {
-  map.classList.add(`map--faded`);
-  form.classList.add(`ad-form--disabled`);
-  activeFormFields.forEach((field) => field.setAttribute(`disabled`, `disabled`));
-  form.reset();
-  filtersForm.reset();
-  mainPin.addEventListener(`mousedown`, onMainPinMouseDown);
+  map.addClass(`map--faded`);
+  form.addClass(`ad-form--disabled`);
+  activeFormFields.each((field) => field.attr(`disabled`, `disabled`));
+  form[0].reset();
+  filtersForm[0].reset();
+  mainPin.on(`mousedown`, onMainPinMouseDown);
 };
 
 const renderPins = (pins) => {
   removeOldPins();
   window.card.remove();
-  const fragment = document.createDocumentFragment();
+  const fragment = $(document.createDocumentFragment());
   const displayedPins = pins.length > QUANTITY_SHOWN_PINS ? QUANTITY_SHOWN_PINS : pins.length;
   for (let i = 0; i < displayedPins; i++) {
     const newPin = window.pin.create(pins[i]);
-    fragment.appendChild(newPin);
+    fragment.append(newPin);
   }
-  pinsSection.appendChild(fragment);
+  pinsSection.append(fragment);
 };
 
 const debounce = () => {
@@ -68,40 +70,39 @@ const debounce = () => {
 };
 
 const removeActivePin = () => {
-  const activePin = document.querySelector(`.map__pin--active`);
+  const activePin = $(`.map__pin--active`);
   if (activePin) {
-    activePin.classList.remove(`map__pin--active`);
+    activePin.removeClass(`map__pin--active`);
   }
 };
 
 const showActiveAdvertisement = (evt) => {
-  const pin = evt.target.closest(`.map__pin[type=button]:not(.map__overlay)`);
-  pin.classList.add(`map__pin--active`);
+  const pin = $(evt.target).closest(`.map__pin[type=button]:not(.map__overlay)`);
+  pin.addClass(`map__pin--active`);
   window.card.expand(pin, pinsArray);
 };
 
 const onPinSectionClick = (evt) => {
-  const pin = evt.target.closest(`.map__pin[type=button]:not(.map__overlay)`);
-  const card = document.querySelector(`.map__card.popup`);
-  const isID = (card && pin && card.dataset.id !== pin.dataset.id);
+  const pin = $(evt.target).closest(`.map__pin[type=button]:not(.map__overlay)`);
+  const isOverlay = $(evt.target).hasClass(`map__overlay`);
+  const card = $(`.map__card.popup`);
+  const isID = (card && pin && card.data(`id`) !== pin.data(`id`));
   const isCardDontOpen = (pin && !card);
-  if (isCardDontOpen || isID) {
+  if (isCardDontOpen || (isID && !isOverlay)) {
     removeActivePin();
     showActiveAdvertisement(evt);
   }
 };
 
 const removeOldPins = () => {
-  const pins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
+  const pins = $(`.map__pin:not(.map__pin--main)`);
   if (pins) {
-    pins.forEach((e) => {
-      e.remove();
-    });
+    pins.remove();
   }
 };
 
 const addListenerOnPinSection = () => {
-  pinsSection.addEventListener(`click`, onPinSectionClick);
+  pinsSection.on(`click`, onPinSectionClick);
 };
 
 const activatePage = () => {
@@ -130,7 +131,7 @@ const onEnterKeydown = (evt) => {
 };
 
 const onFormResetButtonClick = () => {
-  form.reset();
+  form[0].reset();
   filtersForm.reset();
   renderPins(pinsArray);
   window.preview.reset();
@@ -138,11 +139,11 @@ const onFormResetButtonClick = () => {
 };
 
 const addListenerToActivatePage = () => {
-  mainPin.addEventListener(`mousedown`, onMainPinMouseDown);
-  mainPin.addEventListener(`keydown`, onEnterKeydown);
+  mainPin.on(`mousedown`, onMainPinMouseDown);
+  mainPin.on(`keydown`, onEnterKeydown);
   window.pinMoving.addListener();
   window.filtersForm.addListeners();
-  formResetButton.addEventListener(`click`, onFormResetButtonClick);
+  formResetButton.on(`click`, onFormResetButtonClick);
 };
 
 const activate = (pins) => {
