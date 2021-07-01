@@ -37,11 +37,11 @@ const onEscapeKeydown = (evt) => {
 };
 
 const onDocumentClick = (evt) => {
-  const success = main.find(`.success`);
-  const error = main.find(`.error`);
-  if (evt.target === success) {
+  const success = $(`.success`);
+  const error = $(`.error`);
+  if (success) {
     onSuccessClose(evt);
-  } else if (evt.target === error) {
+  } else if (error) {
     onErrorClose(evt);
   }
 };

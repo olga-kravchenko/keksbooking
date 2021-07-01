@@ -3,10 +3,10 @@
 const ERROR_MODAL_DISPLAY_TIME = 3000;
 
 const showErrorMessage = (errorMessage) => {
-  const errorModal = document.createElement(`div`);
-  errorModal.classList.add(`modal-error`);
-  errorModal.textContent = errorMessage;
-  document.body.insertAdjacentElement(`afterbegin`, errorModal);
+  const errorModal = $(`<div></div>`);
+  errorModal.addClass(`modal-error`);
+  errorModal.text(errorMessage);
+  $(`body`).before(errorModal);
   setTimeout(() => errorModal.remove(), ERROR_MODAL_DISPLAY_TIME);
 };
 
