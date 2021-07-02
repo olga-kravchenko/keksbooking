@@ -8,8 +8,8 @@ const MIN_MAP_HEIGHT = 130;
 const MAX_MAP_HEIGHT = 630;
 const RIGHT_BUTTON = 0;
 
-const mainPin = document.querySelector(`.map__pin--main`);
-const addressInput = document.querySelector(`#address`);
+const $mainPin = $(`.map__pin--main`);
+const $addressInput = $(`#address`);
 
 let currentCoordinateLeft = 570;
 let currentCoordinateTop = 375;
@@ -23,12 +23,14 @@ const checkCoordinate = () => {
 };
 
 const setAddressValue = () => {
-  addressInput.value = `${currentCoordinateLeft + PIN_MIDDLE_WIDTH}, ${currentCoordinateTop + PIN_HEIGHT}`;
+  $addressInput.val(`${currentCoordinateLeft + PIN_MIDDLE_WIDTH}, ${currentCoordinateTop + PIN_HEIGHT}`);
 };
 
 const setPinPosition = () => {
-  mainPin.style.top = `${currentCoordinateTop}px`;
-  mainPin.style.left = `${currentCoordinateLeft}px`;
+  $mainPin.css({
+    'top': `${currentCoordinateTop}px`,
+    'left': `${currentCoordinateLeft}px`
+  });
 };
 
 const resetPosition = ()=> {
@@ -46,8 +48,8 @@ const setMoveValue = (evt) => {
     x: evt.clientX,
     y: evt.clientY
   };
-  currentCoordinateLeft = mainPin.offsetLeft - shift.x;
-  currentCoordinateTop = mainPin.offsetTop - shift.y;
+  currentCoordinateLeft = $mainPin.position().left - shift.x;
+  currentCoordinateTop = $mainPin.position().top - shift.y;
 };
 
 const onMouseMove = (evt) => {
@@ -60,8 +62,8 @@ const onMouseMove = (evt) => {
 
 const onMouseUp = (evt) => {
   evt.preventDefault();
-  document.removeEventListener(`mousemove`, onMouseMove);
-  document.removeEventListener(`mouseup`, onMouseUp);
+  $(document).off(`mousemove`, onMouseMove);
+  $(document).off(`mouseup`, onMouseUp);
 };
 
 const onMouseDown = (evt) => {
@@ -73,15 +75,15 @@ const onMouseDown = (evt) => {
           x: evt.clientX,
           y: evt.clientY
         };
-        document.addEventListener(`mousemove`, onMouseMove);
-        document.addEventListener(`mouseup`, onMouseUp);
+        $(document).on(`mousemove`, onMouseMove);
+        $(document).on(`mouseup`, onMouseUp);
         break;
     }
   }
 };
 
 const addListener = () => {
-  mainPin.addEventListener(`mousedown`, onMouseDown);
+  $mainPin.on(`mousedown`, onMouseDown);
 };
 
 window.pinMoving = {
