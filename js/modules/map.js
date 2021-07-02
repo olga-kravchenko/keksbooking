@@ -4,12 +4,12 @@ const RIGHT_BUTTON = 0;
 const QUANTITY_SHOWN_PINS = 5;
 const FILTER_SWITCHING_TIME = 500;
 
-const map = $(`.map`);
-const mainPin = map.find(`.map__pin--main`);
-const pinsSection = map.find(`.map__pins`);
-const form = $(`.ad-form`);
-const filtersForm = $(`.map__filters`);
-const formResetButton = form.find(`.ad-form__reset`);
+const $map = $(`.map`);
+const $mainPin = $map.find(`.map__pin--main`);
+const $pinsSection = $map.find(`.map__pins`);
+const $form = $(`.ad-form`);
+const $filtersForm = $(`.map__filters`);
+const $formResetButton = $form.find(`.ad-form__reset`);
 
 let pinsArray;
 let lastTimeout;
@@ -27,19 +27,19 @@ const addId = () => {
 };
 
 const convertPageToActive = () => {
-  map.removeClass(`map--faded`);
-  form.removeClass(`ad-form--disabled`);
+  $map.removeClass(`map--faded`);
+  $form.removeClass(`ad-form--disabled`);
   $(`.ad-form :input`).prop(`disabled`, false);
   $(`.map__filters :input`).prop(`disabled`, false);
-  mainPin.off(`mousedown`, onMainPinMouseDown);
+  $mainPin.off(`mousedown`, onMainPinMouseDown);
 };
 
 const convertPageToDeactivate = () => {
-  map.addClass(`map--faded`);
-  form.addClass(`ad-form--disabled`);
-  form[0].reset();
-  filtersForm[0].reset();
-  mainPin.on(`mousedown`, onMainPinMouseDown);
+  $map.addClass(`map--faded`);
+  $form.addClass(`ad-form--disabled`);
+  $form[0].reset();
+  $filtersForm[0].reset();
+  $mainPin.on(`mousedown`, onMainPinMouseDown);
 };
 
 const renderPins = (pins) => {
@@ -51,7 +51,7 @@ const renderPins = (pins) => {
     const newPin = window.pin.create(pins[i]);
     fragment.append(newPin);
   }
-  pinsSection.append(fragment);
+  $pinsSection.append(fragment);
 };
 
 const debounce = () => {
@@ -66,7 +66,7 @@ const debounce = () => {
 
 const removeActivePin = () => {
   const activePin = $(`.map__pin--active`);
-  if (activePin) {
+  if (activePin.length) {
     activePin.removeClass(`map__pin--active`);
   }
 };
@@ -78,12 +78,12 @@ const showActiveAdvertisement = (evt) => {
 };
 
 const onPinSectionClick = (evt) => {
-  const pin = $(evt.target).closest(`.map__pin:not(.map__pin--main)`);
-  const isOverlay = $(evt.target).hasClass(`map__overlay`);
-  const card = $(`.map__card.popup`);
-  const isID = (card && pin && card.data(`id`) !== pin.data(`id`));
-  const isCardDontOpen = (pin && !card);
-  if (isCardDontOpen || (isID && !isOverlay)) {
+  const $pin = $(evt.target).closest(`.map__pin:not(.map__pin--main)`);
+  const $card = $(`.map__card.popup`);
+  const cardAndPinPresent = ($card.length && $pin.length);
+  const isID = (cardAndPinPresent && $card.data(`id`) !== $pin.data(`id`));
+  const isCardDontOpen = ($pin.length && !$card.length);
+  if (isCardDontOpen || isID) {
     removeActivePin();
     showActiveAdvertisement(evt);
   }
@@ -97,7 +97,7 @@ const removeOldPins = () => {
 };
 
 const addListenerOnPinSection = () => {
-  pinsSection.on(`click`, onPinSectionClick);
+  $pinsSection.on(`click`, onPinSectionClick);
 };
 
 const activatePage = () => {
@@ -126,19 +126,19 @@ const onEnterKeydown = (evt) => {
 };
 
 const onFormResetButtonClick = () => {
-  form[0].reset();
-  filtersForm.reset();
+  $form[0].reset();
+  $filtersForm.reset();
   renderPins(pinsArray);
   window.preview.reset();
   window.pinMoving.resetPosition();
 };
 
 const addListenerToActivatePage = () => {
-  mainPin.on(`mousedown`, onMainPinMouseDown);
-  mainPin.on(`keydown`, onEnterKeydown);
+  $mainPin.on(`mousedown`, onMainPinMouseDown);
+  $mainPin.on(`keydown`, onEnterKeydown);
   window.pinMoving.addListener();
   window.filtersForm.addListeners();
-  formResetButton.on(`click`, onFormResetButtonClick);
+  $formResetButton.on(`click`, onFormResetButtonClick);
 };
 
 const activate = (pins) => {
