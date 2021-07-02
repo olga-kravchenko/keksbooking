@@ -82,12 +82,12 @@ const onMouseDown = (evt) => {
   }
 };
 
-const addListener = () => {
+const on = () => {
   $mainPin.on(`mousedown`, onMouseDown);
 };
 
 window.pinMoving = {
   setAddressValue,
-  addListener,
+  on,
   resetPosition,
 };

@@ -1,13 +1,13 @@
 'use strict';
 
-const main = $(`main`);
-const successModalTemplate = $(`#success`).contents();
-const errorModalTemplate = $(`#error`).contents();
+const $main = $(`main`);
+const $successTemplate = $(`#success`).contents();
+const $errorTemplate = $(`#error`).contents();
 
 const renderSuccessModal = () => {
-  const modalSuccess = successModalTemplate.clone();
-  main.append(modalSuccess);
-  return modalSuccess;
+  const $modalSuccess = $successTemplate.clone();
+  $main.append($modalSuccess);
+  return $modalSuccess;
 };
 
 const onSuccessClose = (evt) => {
@@ -16,9 +16,9 @@ const onSuccessClose = (evt) => {
 };
 
 const renderErrorModal = () => {
-  const modalError = errorModalTemplate.clone();
-  main.append(modalError);
-  return modalError;
+  const $modalError = $errorTemplate.clone();
+  $main.append($modalError);
+  return $modalError;
 };
 
 const onErrorClose = (evt) => {
@@ -27,21 +27,21 @@ const onErrorClose = (evt) => {
 };
 
 const onEscapeKeydown = (evt) => {
-  const success = main.find(`.success`);
-  const error = main.find(`.error`);
-  if (evt.key === `Escape` && success) {
+  const $success = $main.find(`.success`);
+  const $error = $main.find(`.error`);
+  if (evt.key === `Escape` && $success) {
     onSuccessClose(evt);
-  } else if (evt.key === `Escape` && error) {
+  } else if (evt.key === `Escape` && $error) {
     onErrorClose(evt);
   }
 };
 
 const onDocumentClick = (evt) => {
-  const success = $(`.success`);
-  const error = $(`.error`);
-  if (success) {
+  const $success = $(`.success`);
+  const $error = $(`.error`);
+  if ($success) {
     onSuccessClose(evt);
-  } else if (error) {
+  } else if ($error) {
     onErrorClose(evt);
   }
 };
@@ -51,13 +51,13 @@ const onErrorButtonClick = (evt) => {
   $(`.error`).remove();
 };
 
-const addListenersOnSuccess = () => {
+const onSuccess = () => {
   $(document).on(`click`, onDocumentClick);
   $(document).on(`keydown`, onEscapeKeydown);
 };
 
-const addListenersOnError = () => {
-  const errorButton = main.querySelector(`.error__button`);
+const onError = () => {
+  const errorButton = $main.querySelector(`.error__button`);
   errorButton.on(`click`, onErrorButtonClick);
   $(document).on(`click`, onDocumentClick);
   $(document).on(`keydown`, onEscapeKeydown);
@@ -65,12 +65,12 @@ const addListenersOnError = () => {
 
 const showSuccessModal = () => {
   renderSuccessModal();
-  addListenersOnSuccess();
+  onSuccess();
 };
 
 const showErrorModal = () => {
   renderErrorModal();
-  addListenersOnError();
+  onError();
 };
 
 window.utilForm = {

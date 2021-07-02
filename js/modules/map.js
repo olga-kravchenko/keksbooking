@@ -10,13 +10,15 @@ const $pinsSection = $map.find(`.map__pins`);
 const $form = $(`.ad-form`);
 const $filtersForm = $(`.map__filters`);
 const $formResetButton = $form.find(`.ad-form__reset`);
+const $activeFormFields = $(`.ad-form :input`);
+const activeFiltersFormFields = $(`.map__filters :input`);
 
 let pinsArray;
 let lastTimeout;
 
 const convertFieldsToDisabled = () => {
-  $(`.ad-form :input`).prop(`disabled`, true);
-  $(`.map__filters :input`).prop(`disabled`, true);
+  $activeFormFields.prop(`disabled`, true);
+  activeFiltersFormFields.prop(`disabled`, true);
 };
 
 const addId = () => {
@@ -29,8 +31,8 @@ const addId = () => {
 const convertPageToActive = () => {
   $map.removeClass(`map--faded`);
   $form.removeClass(`ad-form--disabled`);
-  $(`.ad-form :input`).prop(`disabled`, false);
-  $(`.map__filters :input`).prop(`disabled`, false);
+  $activeFormFields.prop(`disabled`, false);
+  activeFiltersFormFields.prop(`disabled`, false);
   $mainPin.off(`mousedown`, onMainPinMouseDown);
 };
 
@@ -45,13 +47,13 @@ const convertPageToDeactivate = () => {
 const renderPins = (pins) => {
   removeOldPins();
   window.card.remove();
-  const fragment = $(document.createDocumentFragment());
+  const $fragment = $(document.createDocumentFragment());
   const displayedPins = pins.length > QUANTITY_SHOWN_PINS ? QUANTITY_SHOWN_PINS : pins.length;
   for (let i = 0; i < displayedPins; i++) {
     const newPin = window.pin.create(pins[i]);
-    fragment.append(newPin);
+    $fragment.append(newPin);
   }
-  $pinsSection.append(fragment);
+  $pinsSection.append($fragment);
 };
 
 const debounce = () => {
@@ -65,16 +67,16 @@ const debounce = () => {
 };
 
 const removeActivePin = () => {
-  const activePin = $(`.map__pin--active`);
-  if (activePin.length) {
-    activePin.removeClass(`map__pin--active`);
+  const $activePin = $(`.map__pin--active`);
+  if ($activePin.length) {
+    $activePin.removeClass(`map__pin--active`);
   }
 };
 
 const showActiveAdvertisement = (evt) => {
-  const pin = $(evt.target).closest(`.map__pin[type=button]:not(.map__overlay)`);
-  pin.addClass(`map__pin--active`);
-  window.card.expand(pin, pinsArray);
+  const $pin = $(evt.target).closest(`.map__pin[type=button]:not(.map__overlay)`);
+  $pin.addClass(`map__pin--active`);
+  window.card.expand($pin, pinsArray);
 };
 
 const onPinSectionClick = (evt) => {
@@ -90,30 +92,24 @@ const onPinSectionClick = (evt) => {
 };
 
 const removeOldPins = () => {
-  const pins = $(`.map__pin:not(.map__pin--main)`);
-  if (pins) {
-    pins.remove();
+  const $pins = $(`.map__pin:not(.map__pin--main)`);
+  if ($pins) {
+    $pins.remove();
   }
 };
 
-const addListenerOnPinSection = () => {
-  $pinsSection.on(`click`, onPinSectionClick);
-};
+const onPinSection = () => $pinsSection.on(`click`, onPinSectionClick);
 
 const activatePage = () => {
   convertPageToActive();
   window.pinMoving.setAddressValue();
   renderPins(pinsArray);
-  addListenerOnPinSection();
+  onPinSection();
 };
 
 const onMainPinMouseDown = (evt) => {
-  if (typeof evt === `object`) {
-    switch (evt.button) {
-      case RIGHT_BUTTON:
-        activatePage();
-        break;
-    }
+  if (evt.button === RIGHT_BUTTON) {
+    activatePage();
   }
 };
 
@@ -127,17 +123,17 @@ const onEnterKeydown = (evt) => {
 
 const onFormResetButtonClick = () => {
   $form[0].reset();
-  $filtersForm.reset();
+  $filtersForm[0].reset();
   renderPins(pinsArray);
   window.preview.reset();
   window.pinMoving.resetPosition();
 };
 
-const addListenerToActivatePage = () => {
+const on = () => {
   $mainPin.on(`mousedown`, onMainPinMouseDown);
   $mainPin.on(`keydown`, onEnterKeydown);
-  window.pinMoving.addListener();
-  window.filtersForm.addListeners();
+  window.pinMoving.on();
+  window.filtersForm.on();
   $formResetButton.on(`click`, onFormResetButtonClick);
 };
 
@@ -145,10 +141,11 @@ const activate = (pins) => {
   pinsArray = pins;
   convertFieldsToDisabled();
   addId();
-  addListenerToActivatePage();
+  on();
 };
 
 const deactivate = () => {
+  convertFieldsToDisabled();
   window.pinMoving.resetPosition();
   convertPageToDeactivate();
   removeOldPins();

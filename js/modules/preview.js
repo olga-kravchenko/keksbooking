@@ -27,13 +27,13 @@ const onFileChooserAvatarChange = () => {
 };
 
 const onFileChooserImageChange = () => {
-  const picture = $(`<img src="" alt="">`);
-  picture.css({
+  const $picture = $(`<img src="" alt="">`);
+  $picture.css({
     'width': `40px`,
     'height': `40px`
   });
-  $apartmentImage.append(picture);
-  imageChange($apartmentImageChooser, picture);
+  $apartmentImage.append($picture);
+  imageChange($apartmentImageChooser, $picture);
 };
 
 const reset = () => {
