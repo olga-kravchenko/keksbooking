@@ -31,18 +31,22 @@ const onEscapeKeydown = (evt) => {
   const $error = $main.find(`.error`);
   if (evt.key === `Escape` && $success) {
     onSuccessClose(evt);
+    offSuccess(evt);
   } else if (evt.key === `Escape` && $error) {
     onErrorClose(evt);
+    offError(evt);
   }
 };
 
 const onDocumentClick = (evt) => {
-  const $success = $(`.success`);
-  const $error = $(`.error`);
+  const $success = $main.find(`.success`);
+  const $error = $main.find(`.error`);
   if ($success) {
     onSuccessClose(evt);
+    offSuccess(evt);
   } else if ($error) {
     onErrorClose(evt);
+    offError(evt);
   }
 };
 
@@ -56,11 +60,23 @@ const onSuccess = () => {
   $(document).on(`keydown`, onEscapeKeydown);
 };
 
+const offSuccess = () => {
+  $(document).off(`click`, onDocumentClick);
+  $(document).off(`keydown`, onEscapeKeydown);
+};
+
 const onError = () => {
   const $errorButton = $main.find(`.error__button`);
   $errorButton.on(`click`, onErrorButtonClick);
   $(document).on(`click`, onDocumentClick);
   $(document).on(`keydown`, onEscapeKeydown);
+};
+
+const offError = () => {
+  const $errorButton = $main.find(`.error__button`);
+  $errorButton.off(`click`, onErrorButtonClick);
+  $(document).off(`click`, onDocumentClick);
+  $(document).off(`keydown`, onEscapeKeydown);
 };
 
 const showSuccessModal = () => {

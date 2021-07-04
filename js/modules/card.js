@@ -34,18 +34,18 @@ const addPhotos = (newCard, advertisement) => {
   }
 };
 
-const create = (advertisement, id) => {
+const create = (ad, id) => {
   const $newCard = $($template.cloneNode(true));
-  $newCard.find(`.popup__title`).text(advertisement.offer.title);
-  $newCard.find(`.popup__text--address`).text(advertisement.offer.address);
-  $newCard.find(`.popup__text--price`).text(`${advertisement.offer.price}₽/ночь`);
-  $newCard.find(`.popup__type`).text(ApartmentNames[advertisement.offer.type]);
-  $newCard.find(`.popup__text--capacity`).text(`${advertisement.offer.rooms} комнаты для ${advertisement.offer.guests} гостей`);
-  $newCard.find(`.popup__text--time`).text(`Заезд после ${advertisement.offer.checkin}, выезд до ${advertisement.offer.checkout}`);
-  addFeatures($newCard, advertisement);
-  $newCard.find(`.popup__description`).text(advertisement.offer.description);
-  addPhotos($newCard, advertisement);
-  $newCard.find(`.popup__avatar`).attr(`src`, advertisement.author.avatar);
+  $newCard.find(`.popup__title`).text(ad.offer.title);
+  $newCard.find(`.popup__text--address`).text(ad.offer.address);
+  $newCard.find(`.popup__text--price`).text(`${ad.offer.price}₽/ночь`);
+  $newCard.find(`.popup__type`).text(ApartmentNames[ad.offer.type]);
+  $newCard.find(`.popup__text--capacity`).text(`${ad.offer.rooms} комнаты для ${ad.offer.guests} гостей`);
+  $newCard.find(`.popup__text--time`).text(`Заезд после ${ad.offer.checkin}, выезд до ${ad.offer.checkout}`);
+  addFeatures($newCard, ad);
+  $newCard.find(`.popup__description`).text(ad.offer.description);
+  addPhotos($newCard, ad);
+  $newCard.find(`.popup__avatar`).attr(`src`, ad.author.avatar);
   $newCard.find(`.map__card.popup`).data(`id`, id);
   return $newCard;
 };
@@ -65,14 +65,8 @@ const show = (pin, pinsArray) => {
   $map.append($fragment, $filterContainer);
 };
 
-const hide = () => {
-  const $card = $(`.map__card`);
-  $card.remove();
-};
-
 const onCloseButtonClick = (evt) => {
-  off();
-  hide();
+  remove();
   window.map.removeActivePin(evt);
 };
 
@@ -80,22 +74,14 @@ const onEscKeydown = (evt) => {
   const isEscape = evt.key === `Escape`;
   if (isEscape) {
     evt.preventDefault();
-    off();
-    hide();
+    remove();
     window.map.removeActivePin(evt);
   }
 };
 
 const on = () => {
-  const $closeButton = $(`.popup__close`);
-  $closeButton.on(`click`, onCloseButtonClick);
+  $(`.popup__close`).on(`click`, onCloseButtonClick);
   $(document).on(`keydown`, onEscKeydown);
-};
-
-const off = () => {
-  const $closeButton = $(`.popup__close`);
-  $closeButton.off(`click`, onCloseButtonClick);
-  $(document).off(`keydown`, onEscKeydown);
 };
 
 const expand = (pin, pins) => {

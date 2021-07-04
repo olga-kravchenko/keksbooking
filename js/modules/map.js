@@ -73,7 +73,7 @@ const removeActivePin = () => {
   }
 };
 
-const showActiveAdvertisement = (evt) => {
+const showActiveAd = (evt) => {
   const $pin = $(evt.target).closest(`.map__pin[type=button]:not(.map__overlay)`);
   $pin.addClass(`map__pin--active`);
   window.card.expand($pin, pinsArray);
@@ -83,11 +83,11 @@ const onPinSectionClick = (evt) => {
   const $pin = $(evt.target).closest(`.map__pin:not(.map__pin--main)`);
   const $card = $(`.map__card.popup`);
   const cardAndPinPresent = ($card.length && $pin.length);
-  const isID = (cardAndPinPresent && $card.data(`id`) !== $pin.data(`id`));
+  const matchById = (cardAndPinPresent && $card.data(`id`) !== $pin.data(`id`));
   const isCardDontOpen = ($pin.length && !$card.length);
-  if (isCardDontOpen || isID) {
+  if (isCardDontOpen || matchById) {
     removeActivePin();
-    showActiveAdvertisement(evt);
+    showActiveAd(evt);
   }
 };
 
@@ -98,13 +98,11 @@ const removeOldPins = () => {
   }
 };
 
-const onPinSection = () => $pinsSection.on(`click`, onPinSectionClick);
-
 const activatePage = () => {
   convertPageToActive();
   window.pinMoving.setAddressValue();
   renderPins(pinsArray);
-  onPinSection();
+  $pinsSection.on(`click`, onPinSectionClick);
 };
 
 const onMainPinMouseDown = (evt) => {

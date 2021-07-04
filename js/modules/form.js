@@ -110,11 +110,7 @@ const on = () => {
   window.preview.addListeners();
 };
 
-const activate = () => {
-  on();
-};
-
 window.form = {
-  activate,
+  on,
 };
 
