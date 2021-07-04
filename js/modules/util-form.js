@@ -57,8 +57,8 @@ const onSuccess = () => {
 };
 
 const onError = () => {
-  const errorButton = $main.querySelector(`.error__button`);
-  errorButton.on(`click`, onErrorButtonClick);
+  const $errorButton = $main.find(`.error__button`);
+  $errorButton.on(`click`, onErrorButtonClick);
   $(document).on(`click`, onDocumentClick);
   $(document).on(`keydown`, onEscapeKeydown);
 };

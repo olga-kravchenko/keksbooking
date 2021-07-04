@@ -3,40 +3,42 @@
 const STATUS_CODE_OK = 200;
 const TIMEOUT_IN_MS = 10000;
 
-const ServerUrl = {
+const RequestUrl = {
   GET: `https://21.javascript.pages.academy/keksobooking/data`,
   POST: `https://21.javascript.pages.academy/keksobooking`,
 };
 
-const onRequestLoad = (request, onLoad, onError) => {
-  if (request.status === STATUS_CODE_OK) {
-    onLoad(request.response);
+const handleErrors = ($xhr, onError) => {
+  if ($xhr.status > STATUS_CODE_OK) {
+    onError(`Статус ответа: ${$xhr.status} ${$xhr.statusText}`);
+  } else if ($xhr.statusText === `timeout`) {
+    onError(`Запрос не успел выполниться за ${TIMEOUT_IN_MS} мс`);
   } else {
-    onError(`Статус ответа: ${request.status} ${request.statusText}`);
+    onError(`Произошла ошибка соединения`);
   }
 };
 
-const onRequestError = (onError) => onError(`Произошла ошибка соединения`);
-const onRequestTimeout = (onError) => onError(`Запрос не успел выполниться за ${TIMEOUT_IN_MS} мс`);
-
-const sendRequest = (onSuccess, onError, requestMethod, data) => {
-  const request = new XMLHttpRequest();
-  request.responseType = `json`;
-  request.timeout = TIMEOUT_IN_MS;
-  request.addEventListener(`load`, () => onRequestLoad(request, onSuccess, onError));
-  request.addEventListener(`error`, () => onRequestError(onError));
-  request.addEventListener(`timeout`, () => onRequestTimeout(onError));
-  const url = requestMethod === `POST` ? ServerUrl.POST : ServerUrl.GET;
-  request.open(requestMethod, url);
-  if (data) {
-    request.send(data);
-  } else {
-    request.send();
-  }
+const get = (onSuccess, onError) => {
+  $.ajax({
+    url: RequestUrl.GET,
+    timeout: TIMEOUT_IN_MS,
+    success: (data) => onSuccess(data),
+    error: ($xhr) => handleErrors($xhr, onError),
+  });
 };
 
-const get = (onSuccess, onError) => sendRequest(onSuccess, onError, `GET`);
-const post = (data, onSuccess, onError) => sendRequest(onSuccess, onError, `POST`, data);
+const post = (dataPost, onSuccess, onError) => {
+  $.ajax({
+    type: `POST`,
+    url: RequestUrl.POST,
+    timeout: TIMEOUT_IN_MS,
+    data: dataPost,
+    processData: false,
+    contentType: false,
+    success: () => onSuccess(),
+    error: ($xhr) => handleErrors($xhr, onError),
+  });
+};
 
 window.backend = {
   get,
