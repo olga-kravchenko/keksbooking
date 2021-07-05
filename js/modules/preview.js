@@ -9,6 +9,18 @@ const $apartmentImage = $(`.ad-form__photo`);
 
 const reader = new FileReader();
 
+const createImage = () => {
+  const $picture = $(`<img src="img/muffin-grey.svg" alt="">`);
+  $picture.css({
+    'width': `40px`,
+    'height': `40px`,
+  });
+  $apartmentImage.append($picture);
+  return $picture;
+};
+
+const $picture = createImage();
+
 const imageChange = ($fileChooser, img) => {
   const file = $fileChooser[0].files[0];
   const fileName = file.name.toLowerCase();
@@ -27,21 +39,12 @@ const onFileChooserAvatarChange = () => {
 };
 
 const onFileChooserImageChange = () => {
-  const $picture = $(`<img src="" alt="">`);
-  $picture.css({
-    'width': `40px`,
-    'height': `40px`
-  });
-  $apartmentImage.append($picture);
   imageChange($apartmentImageChooser, $picture);
 };
 
 const reset = () => {
   $mapImage.attr(`src`, `img/muffin-grey.svg`);
-  const $image = $(`.ad-form__photo img`);
-  if ($image.length) {
-    $image.remove();
-  }
+  $picture.attr(`src`, `img/muffin-grey.svg`);
 };
 
 const addListeners = () => {

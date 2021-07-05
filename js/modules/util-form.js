@@ -10,9 +10,10 @@ const renderSuccessModal = () => {
   return $modalSuccess;
 };
 
-const onSuccessClose = (evt) => {
-  evt.preventDefault();
+const onSuccessClose = () => {
   $(`.success`).remove();
+  offSuccess();
+  offError();
 };
 
 const renderErrorModal = () => {
@@ -21,32 +22,27 @@ const renderErrorModal = () => {
   return $modalError;
 };
 
-const onErrorClose = (evt) => {
-  evt.preventDefault();
+const onErrorClose = () => {
   $(`.error`).remove();
 };
 
 const onEscapeKeydown = (evt) => {
   const $success = $main.find(`.success`);
   const $error = $main.find(`.error`);
-  if (evt.key === `Escape` && $success) {
+  if (evt.key === `Escape` && $success.length) {
     onSuccessClose(evt);
-    offSuccess(evt);
-  } else if (evt.key === `Escape` && $error) {
+  } else if (evt.key === `Escape` && $error.length) {
     onErrorClose(evt);
-    offError(evt);
   }
 };
 
-const onDocumentClick = (evt) => {
+const onDocumentClick = () => {
   const $success = $main.find(`.success`);
   const $error = $main.find(`.error`);
-  if ($success) {
-    onSuccessClose(evt);
-    offSuccess(evt);
-  } else if ($error) {
-    onErrorClose(evt);
-    offError(evt);
+  if ($success.length) {
+    onSuccessClose();
+  } else if ($error.length) {
+    onErrorClose();
   }
 };
 
@@ -82,6 +78,7 @@ const offError = () => {
 const showSuccessModal = () => {
   renderSuccessModal();
   onSuccess();
+  window.map.deactivate();
 };
 
 const showErrorModal = () => {

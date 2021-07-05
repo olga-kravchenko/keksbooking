@@ -11,14 +11,14 @@ const $form = $(`.ad-form`);
 const $filtersForm = $(`.map__filters`);
 const $formResetButton = $form.find(`.ad-form__reset`);
 const $activeFormFields = $(`.ad-form :input`);
-const activeFiltersFormFields = $(`.map__filters :input`);
+const $activeFiltersFormFields = $(`.map__filters :input`);
 
 let pinsArray;
 let lastTimeout;
 
 const convertFieldsToDisabled = () => {
   $activeFormFields.prop(`disabled`, true);
-  activeFiltersFormFields.prop(`disabled`, true);
+  $activeFiltersFormFields.prop(`disabled`, true);
 };
 
 const addId = () => {
@@ -32,7 +32,7 @@ const convertPageToActive = () => {
   $map.removeClass(`map--faded`);
   $form.removeClass(`ad-form--disabled`);
   $activeFormFields.prop(`disabled`, false);
-  activeFiltersFormFields.prop(`disabled`, false);
+  $activeFiltersFormFields.prop(`disabled`, false);
   $mainPin.off(`mousedown`, onMainPinMouseDown);
 };
 

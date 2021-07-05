@@ -96,7 +96,6 @@ const onFormSubmit = (evt) => {
     evt.preventDefault();
     const formData = new FormData($form[0]);
     window.backend.post(formData, window.utilForm.showSuccessModal, window.utilForm.showErrorModal);
-    window.map.deactivate();
   }
 };
 
