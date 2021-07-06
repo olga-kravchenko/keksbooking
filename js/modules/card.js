@@ -12,25 +12,35 @@ const $filterContainer = $(`.map__filters-container`);
 const $template = $(`#card`)[0].content;
 
 const addFeatures = (newCard, advertisement) => {
+  const isEmpty = advertisement.offer.features.length === 0;
   const $featureSection = newCard.find(`.popup__features`);
-  $featureSection.empty();
-  let features = advertisement.offer.features;
-  for (let i = 0; i < features.length; i++) {
-    const $feature = $(`<li></li>`);
-    $feature.addClass(`popup__feature`);
-    $feature.addClass(`popup__feature--${features[i]}`);
-    $featureSection.append($feature);
+  if (!isEmpty) {
+    $featureSection.empty();
+    let features = advertisement.offer.features;
+    for (let i = 0; i < features.length; i++) {
+      const $feature = $(`<li></li>`);
+      $feature.addClass(`popup__feature`);
+      $feature.addClass(`popup__feature--${features[i]}`);
+      $featureSection.append($feature);
+    }
+  } else {
+    $featureSection.remove();
   }
 };
 
 const addPhotos = (newCard, advertisement) => {
+  const isEmpty = advertisement.offer.photos.length === 0;
   const $photosSection = newCard.find(`.popup__photos`);
-  $photosSection.empty();
-  let photos = advertisement.offer.photos;
-  for (let i = 0; i < photos.length; i++) {
-    const $photo = $(`<img src="${photos[i]}" alt="${advertisement.offer.title}" width="45" height="45">`);
-    $photo.addClass(`popup__photo`);
-    $photosSection.append($photo);
+  if (!isEmpty) {
+    $photosSection.empty();
+    let photos = advertisement.offer.photos;
+    for (let i = 0; i < photos.length; i++) {
+      const $photo = $(`<img src="${photos[i]}" alt="${advertisement.offer.title}" width="45" height="45">`);
+      $photo.addClass(`popup__photo`);
+      $photosSection.append($photo);
+    }
+  } else {
+    $photosSection.remove();
   }
 };
 
