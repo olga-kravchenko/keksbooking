@@ -34,7 +34,7 @@ const checkPrice = (pins) => {
     pins = pins.filter((e) => {
       switch (priceValue) {
         case PriceFiltering.MIDDLE:
-          return e.offer.price > MIN_PRICE_VALUE || e.offer.price < MAX_PRICE_VALUE;
+          return e.offer.price >= MIN_PRICE_VALUE && e.offer.price <= MAX_PRICE_VALUE;
         case PriceFiltering.LOW:
           return e.offer.price < MIN_PRICE_VALUE;
         default:
