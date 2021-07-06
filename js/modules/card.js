@@ -12,9 +12,9 @@ const $filterContainer = $(`.map__filters-container`);
 const $template = $(`#card`)[0].content;
 
 const addFeatures = (newCard, advertisement) => {
-  const isEmpty = advertisement.offer.features.length === 0;
+  const isEmptyFeatures = advertisement.offer.features.length === 0;
   const $featureSection = newCard.find(`.popup__features`);
-  if (!isEmpty) {
+  if (!isEmptyFeatures) {
     $featureSection.empty();
     let features = advertisement.offer.features;
     for (let i = 0; i < features.length; i++) {
@@ -29,9 +29,9 @@ const addFeatures = (newCard, advertisement) => {
 };
 
 const addPhotos = (newCard, advertisement) => {
-  const isEmpty = advertisement.offer.photos.length === 0;
+  const isEmptyPhotos = advertisement.offer.photos.length === 0;
   const $photosSection = newCard.find(`.popup__photos`);
-  if (!isEmpty) {
+  if (!isEmptyPhotos) {
     $photosSection.empty();
     let photos = advertisement.offer.photos;
     for (let i = 0; i < photos.length; i++) {
@@ -105,4 +105,3 @@ window.card = {
   expand,
   remove,
 };
-

@@ -1,11 +1,11 @@
 'use strict';
 
-const PIN_HEIGHT = 55;
+const PIN_HEIGHT = 40;
 const PIN_MIDDLE_WIDTH = 34;
 const MAX_MAP_WIDTH = 1200;
 const MIN_MAP_WIDTH = 270;
-const MIN_MAP_HEIGHT = 75;
-const MAX_MAP_HEIGHT = 575;
+const MIN_MAP_HEIGHT = 90;
+const MAX_MAP_HEIGHT = 590;
 const RIGHT_BUTTON = 0;
 
 const $mainPin = $(`.map__pin--main`);
@@ -23,7 +23,9 @@ const checkCoordinate = () => {
 };
 
 const setAddressValue = () => {
-  $addressInput.val(`${currentCoordinateLeft + PIN_MIDDLE_WIDTH}, ${currentCoordinateTop + PIN_HEIGHT}`);
+  const x = currentCoordinateLeft + PIN_MIDDLE_WIDTH;
+  const y = currentCoordinateTop + PIN_HEIGHT;
+  $addressInput.val(`${x}, ${y}`);
 };
 
 const setPinPosition = () => {

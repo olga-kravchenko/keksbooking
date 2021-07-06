@@ -9,18 +9,6 @@ const PriceFiltering = {
   LOW: `low`,
 };
 
-const QuantityOfRooms = {
-  ONE: `1`,
-  TWO: `2`,
-  THREE: `3`,
-};
-
-const QuantityOfGuests = {
-  NULL: `0`,
-  ONE: `1`,
-  TWO: `2`,
-};
-
 const $filtersForm = $(`.map__filters`);
 const $housingType = $filtersForm.find(`#housing-type`);
 const $housingPrice = $filtersForm.find(`#housing-price`);
@@ -56,16 +44,7 @@ const checkPlace = (pins) => {
 const checkRooms = (pins) => {
   const roomsValue = $housingRooms.val();
   if (roomsValue !== ANY_VALUE) {
-    pins = pins.filter((e) => {
-      switch (roomsValue) {
-        case QuantityOfRooms.ONE:
-          return e.offer.rooms === +QuantityOfRooms.ONE;
-        case QuantityOfRooms.TWO:
-          return e.offer.rooms === +QuantityOfRooms.TWO;
-        default:
-          return e.offer.rooms === +QuantityOfRooms.THREE;
-      }
-    });
+    pins = pins.filter((e) => e.offer.rooms === +roomsValue);
   }
   return pins;
 };
@@ -73,25 +52,16 @@ const checkRooms = (pins) => {
 const checkGuests = (pins) => {
   const guestsValue = $housingGuests.val();
   if (guestsValue !== ANY_VALUE) {
-    pins = pins.filter((e) => {
-      switch (guestsValue) {
-        case QuantityOfGuests.ONE:
-          return e.offer.guests === +QuantityOfGuests.ONE;
-        case QuantityOfGuests.TWO:
-          return e.offer.guests === +QuantityOfGuests.TWO;
-        default:
-          return e.offer.guests === +QuantityOfGuests.NULL;
-      }
-    });
+    pins = pins.filter((e) => e.offer.guests === +guestsValue);
   }
   return pins;
 };
 
 const checkCheckbox = (pins) => {
   const $checkedFeatures = $housingFeatures.find(`.map__checkbox:checked`);
-  const features = Array.from($checkedFeatures).map((e) => e.value);
-  if (features.length > 0) {
-    pins = pins.filter((e) => features.every((checked) => e.offer.features.indexOf(checked) !== -1));
+  const $features = Array.from($checkedFeatures).map((e) => e.value);
+  if ($features.length > 0) {
+    pins = pins.filter((e) => $features.every((checked) => e.offer.features.indexOf(checked) !== -1));
   }
   return pins;
 };
@@ -122,4 +92,3 @@ window.filtersForm = {
   getData,
   on,
 };
-

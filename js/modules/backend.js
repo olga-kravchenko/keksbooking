@@ -36,7 +36,7 @@ const post = (dataPost, onSuccess, onError) => {
     processData: false,
     contentType: false,
     success: () => onSuccess(),
-    error: ($xhr) => handleErrors($xhr, onError),
+    error: () => onError(),
   });
 };
 

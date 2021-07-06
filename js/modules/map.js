@@ -84,8 +84,7 @@ const onPinSectionClick = (evt) => {
   const $card = $(`.map__card.popup`);
   const cardAndPinPresent = ($card.length && $pin.length);
   const matchById = (cardAndPinPresent && $card.data(`id`) !== $pin.data(`id`));
-  const isCardDontOpen = ($pin.length && !$card.length);
-  if (isCardDontOpen || matchById) {
+  if ($pin.length || matchById) {
     removeActivePin();
     showActiveAd(evt);
   }
