@@ -1,11 +1,11 @@
 'use strict';
 
-const PIN_HEIGHT = 87;
+const PIN_HEIGHT = 55;
 const PIN_MIDDLE_WIDTH = 34;
 const MAX_MAP_WIDTH = 1200;
 const MIN_MAP_WIDTH = 270;
-const MIN_MAP_HEIGHT = 130;
-const MAX_MAP_HEIGHT = 630;
+const MIN_MAP_HEIGHT = 75;
+const MAX_MAP_HEIGHT = 575;
 const RIGHT_BUTTON = 0;
 
 const $mainPin = $(`.map__pin--main`);

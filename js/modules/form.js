@@ -23,12 +23,6 @@ const TypeApartment = {
   PALACE: `palace`,
 };
 
-const Time = {
-  TWELVE: `12:00`,
-  THIRTEEN: `13:00`,
-  FOURTEEN: `14:00`,
-};
-
 const $form = $(`.ad-form`);
 const $roomQuantity = $form.find(`#room_number`);
 const $capacityQuantity = $form.find(`#capacity`);
@@ -72,24 +66,8 @@ const onTypeChange = () => {
   $price.attr(`placeholder`, minPrice);
 };
 
-const changeTimeValue = (firstSelectValue) => {
-  let time;
-  switch (firstSelectValue) {
-    case Time.TWELVE:
-      time = Time.TWELVE;
-      break;
-    case Time.THIRTEEN:
-      time = Time.THIRTEEN;
-      break;
-    case Time.FOURTEEN:
-      time = Time.FOURTEEN;
-      break;
-  }
-  return time;
-};
-
-const onTimeInChange = () => $timeOut.val(changeTimeValue($timeIn.val()));
-const onTimeOutChange = () => $timeIn.val(changeTimeValue($timeOut.val()));
+const onTimeInChange = () => $timeOut.val($timeIn.val());
+const onTimeOutChange = () => $timeIn.val($timeOut.val());
 
 const onFormSubmit = (evt) => {
   if (validationOfRoomsAndPlaces(evt)) {
