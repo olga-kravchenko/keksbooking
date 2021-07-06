@@ -9,50 +9,40 @@ const $apartmentImage = $(`.ad-form__photo`);
 
 const reader = new FileReader();
 
-const createImage = () => {
-  const $picture = $(`<img src="img/muffin-grey.svg" alt="">`);
-  $picture.css({
-    'width': `40px`,
-    'height': `40px`,
-  });
-  $apartmentImage.append($picture);
-  return $picture;
-};
-
-const $picture = createImage();
-
-const imageChange = ($fileChooser, img) => {
+const imageChange = ($fileChooser, onReaderLoad) => {
   const file = $fileChooser[0].files[0];
   const fileName = file.name.toLowerCase();
   const matchingTheFileType = FILE_TYPES.some((e) => fileName.endsWith(e));
   if (matchingTheFileType) {
-    $(reader).on(`load`, () => {
-      img.attr(`src`, reader.result);
-      img.attr(`alt`, `Загруженное изображение`);
-    });
+    $(reader).on(`load`, onReaderLoad);
     reader.readAsDataURL(file);
   }
 };
 
-const onFileChooserAvatarChange = () => {
-  imageChange($mapImageChooser, $mapImage);
+const onReaderLoadSetAvatarImage = () => $mapImage.attr({src: `${reader.result}`, alt: `Загруженное изображение`});
+
+const onReaderLoadSetApartmentImage = () => {
+  $apartmentImage.css({
+    'backgroundImage': `url(${reader.result})`,
+    'backgroundSize': `cover`,
+    'backgroundPosition': `center`,
+  });
 };
 
-const onFileChooserImageChange = () => {
-  imageChange($apartmentImageChooser, $picture);
-};
+const onFileChooserAvatarChange = () => imageChange($mapImageChooser, onReaderLoadSetAvatarImage);
+const onFileChooserImageChange = () => imageChange($apartmentImageChooser, onReaderLoadSetApartmentImage);
 
 const reset = () => {
   $mapImage.attr(`src`, `img/muffin-grey.svg`);
-  $picture.attr(`src`, `img/muffin-grey.svg`);
+  $apartmentImage.css({'backgroundImage': `none`});
 };
 
-const addListeners = () => {
+const on = () => {
   $mapImageChooser.on(`change`, onFileChooserAvatarChange);
   $apartmentImageChooser.on(`change`, onFileChooserImageChange);
 };
 
 window.preview = {
-  addListeners,
+  on,
   reset,
 };

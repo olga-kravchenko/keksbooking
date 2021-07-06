@@ -31,14 +31,14 @@ const $price = $form.find(`#price`);
 const $timeIn = $form.find(`#timein`);
 const $timeOut = $form.find(`#timeout`);
 
-const validationOfRoomsAndPlaces = (evt) => {
+const checkRoomsAndCapacity = (evt) => {
   const rooms = +$roomQuantity.val();
-  const places = +$capacityQuantity.val();
+  const capacity = +$capacityQuantity.val();
   let currentMessage = Message.NOT_ERROR;
-  if (rooms === MAX_QUANTITY_OF_ROOMS && places !== MIN_QUANTITY_OF_PLACES
-    || places === MIN_QUANTITY_OF_PLACES && rooms !== MAX_QUANTITY_OF_ROOMS) {
+  if (rooms === MAX_QUANTITY_OF_ROOMS && capacity !== MIN_QUANTITY_OF_PLACES
+    || capacity === MIN_QUANTITY_OF_PLACES && rooms !== MAX_QUANTITY_OF_ROOMS) {
     currentMessage = Message.TOO_MANY_ROOMS;
-  } else if (rooms < places) {
+  } else if (rooms < capacity) {
     currentMessage = Message.NOT_ENOUGH_ROOMS;
   }
   if (currentMessage) {
@@ -48,6 +48,8 @@ const validationOfRoomsAndPlaces = (evt) => {
   $roomQuantity[0].reportValidity();
   return Boolean(!currentMessage);
 };
+
+const onRoomOrCapacityChange = () => checkRoomsAndCapacity();
 
 const onTypeChange = () => {
   let minPrice = MinPriceValue.BUNGALOW;
@@ -70,7 +72,7 @@ const onTimeInChange = () => $timeOut.val($timeIn.val());
 const onTimeOutChange = () => $timeIn.val($timeOut.val());
 
 const onFormSubmit = (evt) => {
-  if (validationOfRoomsAndPlaces(evt)) {
+  if (checkRoomsAndCapacity(evt)) {
     evt.preventDefault();
     const formData = new FormData($form[0]);
     window.backend.post(formData, window.utilForm.showSuccessModal, window.utilForm.showErrorModal);
@@ -78,16 +80,15 @@ const onFormSubmit = (evt) => {
 };
 
 const on = () => {
-  $roomQuantity.on(`change`, validationOfRoomsAndPlaces);
-  $capacityQuantity.on(`change`, validationOfRoomsAndPlaces);
+  $roomQuantity.on(`change`, onRoomOrCapacityChange);
+  $capacityQuantity.on(`change`, onRoomOrCapacityChange);
   $type.on(`change`, onTypeChange);
   $timeIn.on(`change`, onTimeInChange);
   $timeOut.on(`change`, onTimeOutChange);
   $form.on(`submit`, onFormSubmit);
-  window.preview.addListeners();
+  window.preview.on();
 };
 
 window.form = {
   on,
 };
-
