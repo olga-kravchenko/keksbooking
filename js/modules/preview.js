@@ -7,30 +7,36 @@ const $mapImage = $(`.ad-form-header__upload img`);
 const $apartmentImageChooser = $(`#images`);
 const $apartmentImage = $(`.ad-form__photo`);
 
-const reader = new FileReader();
-
-const imageChange = ($fileChooser, onReaderLoad) => {
-  const file = $fileChooser[0].files[0];
+const onFileChooserAvatarChange = () => {
+  const reader = new FileReader();
+  const file = $mapImageChooser[0].files[0];
   const fileName = file.name.toLowerCase();
   const matchingTheFileType = FILE_TYPES.some((e) => fileName.endsWith(e));
   if (matchingTheFileType) {
-    $(reader).on(`load`, onReaderLoad);
+    $(reader).on(`load`, () => {
+      $mapImage.attr(`src`, reader.result);
+      $mapImage.attr(`alt`, `Загруженное изображение`);
+    });
     reader.readAsDataURL(file);
   }
 };
 
-const onReaderLoadSetAvatarImage = () => $mapImage.attr({src: `${reader.result}`, alt: `Загруженное изображение`});
-
-const onReaderLoadSetApartmentImage = () => {
-  $apartmentImage.css({
-    'backgroundImage': `url(${reader.result})`,
-    'backgroundSize': `cover`,
-    'backgroundPosition': `center`,
-  });
+const onFileChooserImageChange = () => {
+  const reader = new FileReader();
+  const file = $apartmentImageChooser[0].files[0];
+  const fileName = file.name.toLowerCase();
+  const matchingTheFileType = FILE_TYPES.some((e) => fileName.endsWith(e));
+  if (matchingTheFileType) {
+    $(reader).on(`load`, () => {
+      $apartmentImage.css({
+        'backgroundImage': `url(${reader.result})`,
+        'backgroundSize': `cover`,
+        'backgroundPosition': `center`,
+      });
+    });
+    reader.readAsDataURL(file);
+  }
 };
-
-const onFileChooserAvatarChange = () => imageChange($mapImageChooser, onReaderLoadSetAvatarImage);
-const onFileChooserImageChange = () => imageChange($apartmentImageChooser, onReaderLoadSetApartmentImage);
 
 const reset = () => {
   $mapImage.attr(`src`, `img/muffin-grey.svg`);
