@@ -1,51 +1,56 @@
 'use strict';
 
 const ApartmentNames = {
-  'palace': `Дворец`,
-  'flat': `Квартира`,
-  'house': `Дом`,
-  'bungalow': `Бунгало`
+  palace: `Дворец`,
+  flat: `Квартира`,
+  house: `Дом`,
+  bungalow: `Бунгало`,
 };
 
 const $map = $(`.map`);
 const $filterContainer = $(`.map__filters-container`);
-const $template = $(`#card`)[0].content;
+const template = $(`#card`)[0].content;
 
-const addFeatures = (newCard, advertisement) => {
-  const isEmptyFeatures = advertisement.offer.features.length === 0;
+const addFeatures = (newCard, ad) => {
+  const isEmptyFeatures = ad.offer.features.length === 0;
   const $featureSection = newCard.find(`.popup__features`);
-  if (!isEmptyFeatures) {
+  if (isEmptyFeatures) {
+    $featureSection.remove();
+  } else {
     $featureSection.empty();
-    let features = advertisement.offer.features;
+    const features = ad.offer.features;
+    const $fragment = $(document.createDocumentFragment());
     for (let i = 0; i < features.length; i++) {
       const $feature = $(`<li></li>`);
       $feature.addClass(`popup__feature`);
       $feature.addClass(`popup__feature--${features[i]}`);
-      $featureSection.append($feature);
+      $fragment.append($feature);
     }
-  } else {
-    $featureSection.remove();
+    $featureSection.append($fragment);
   }
 };
 
-const addPhotos = (newCard, advertisement) => {
-  const isEmptyPhotos = advertisement.offer.photos.length === 0;
+const addPhotos = (newCard, ad) => {
+  const isPhotoSectionPresent = ad.offer.photos.length === 0;
   const $photosSection = newCard.find(`.popup__photos`);
-  if (!isEmptyPhotos) {
-    $photosSection.empty();
-    let photos = advertisement.offer.photos;
-    for (let i = 0; i < photos.length; i++) {
-      const $photo = $(`<img src="${photos[i]}" alt="${advertisement.offer.title}" width="45" height="45">`);
-      $photo.addClass(`popup__photo`);
-      $photosSection.append($photo);
-    }
-  } else {
+  if (isPhotoSectionPresent) {
     $photosSection.remove();
+  } else {
+    $photosSection.empty();
+    let photos = ad.offer.photos;
+    const $fragment = $(document.createDocumentFragment());
+    for (let i = 0; i < photos.length; i++) {
+      const $photo = $(`<img src="${photos[i]}" alt="${ad.offer.title}" width="45" height="45">`);
+      $photo.addClass(`popup__photo`);
+      $fragment.append($photo);
+    }
+    $photosSection.append($fragment);
   }
 };
 
 const create = (ad, id) => {
-  const $newCard = $($template.cloneNode(true));
+  const $newCard = $(template.cloneNode(true));
+  $newCard.find(`.popup__avatar`).attr(`src`, ad.author.avatar);
   $newCard.find(`.popup__title`).text(ad.offer.title);
   $newCard.find(`.popup__text--address`).text(ad.offer.address);
   $newCard.find(`.popup__text--price`).text(`${ad.offer.price}₽/ночь`);
@@ -55,7 +60,6 @@ const create = (ad, id) => {
   addFeatures($newCard, ad);
   $newCard.find(`.popup__description`).text(ad.offer.description);
   addPhotos($newCard, ad);
-  $newCard.find(`.popup__avatar`).attr(`src`, ad.author.avatar);
   $newCard.find(`.map__card.popup`).data(`id`, id);
   return $newCard;
 };
@@ -67,10 +71,10 @@ const remove = () => {
   }
 };
 
-const show = (pin, pinsArray) => {
+const render = (pin, pins) => {
   const id = pin.data(`id`);
   const $fragment = $(document.createDocumentFragment());
-  const newCard = create(pinsArray[id], id);
+  const newCard = create(pins[id], id);
   $fragment.append(newCard);
   $map.append($fragment, $filterContainer);
 };
@@ -94,14 +98,15 @@ const on = () => {
   $(document).on(`keydown`, onEscKeydown);
 };
 
-const expand = (pin, pins) => {
+//todo to show
+const show = (pin, pins) => {
   remove();
-  show(pin, pins);
+  render(pin, pins);
   on();
 };
 
 window.card = {
   create,
-  expand,
+  show,
   remove,
 };
