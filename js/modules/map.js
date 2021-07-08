@@ -13,7 +13,7 @@ const $formResetButton = $form.find(`.ad-form__reset`);
 const $activeFormFields = $(`.ad-form :input`);
 const $activeFiltersFormFields = $(`.map__filters :input`);
 
-let pinsArray;
+let defaultPins;
 let lastTimeout;
 
 const convertFieldsToDisabled = () => {
@@ -22,8 +22,8 @@ const convertFieldsToDisabled = () => {
 };
 
 const addId = () => {
-  for (let i = 0; i < pinsArray.length; i++) {
-    const pins = pinsArray[i];
+  for (let i = 0; i < defaultPins.length; i++) {
+    const pins = defaultPins[i];
     pins.id = i;
   }
 };
@@ -61,7 +61,7 @@ const debounce = () => {
     window.clearTimeout(lastTimeout);
   }
   lastTimeout = window.setTimeout(() => {
-    const filteredPins = window.filtersForm.getData(pinsArray);
+    const filteredPins = window.filtersForm.getData(defaultPins);
     renderPins(filteredPins);
   }, FILTER_SWITCHING_TIME);
 };
@@ -76,15 +76,15 @@ const removeActivePin = () => {
 const showActiveAd = (evt) => {
   const $pin = $(evt.target).closest(`.map__pin[type=button]:not(.map__overlay)`);
   $pin.addClass(`map__pin--active`);
-  window.card.expand($pin, pinsArray);
+  window.card.show($pin, defaultPins);
 };
 
 const onPinSectionClick = (evt) => {
   const $pin = $(evt.target).closest(`.map__pin:not(.map__pin--main)`);
   const $card = $(`.map__card.popup`);
   const cardAndPinPresent = ($card.length && $pin.length);
-  const matchById = (cardAndPinPresent && $card.data(`id`) !== $pin.data(`id`));
-  if ($pin.length || matchById) {
+  const isNotMatchedById = (cardAndPinPresent && $card.data(`id`) !== $pin.data(`id`));
+  if ($pin.length || isNotMatchedById) {
     removeActivePin();
     showActiveAd(evt);
   }
@@ -100,7 +100,7 @@ const removeOldPins = () => {
 const activatePage = () => {
   convertPageToActive();
   window.pinMoving.setAddressValue();
-  renderPins(pinsArray);
+  renderPins(defaultPins);
   $pinsSection.on(`click`, onPinSectionClick);
 };
 
@@ -121,7 +121,7 @@ const onEnterKeydown = (evt) => {
 const onFormResetButtonClick = () => {
   $form[0].reset();
   $filtersForm[0].reset();
-  renderPins(pinsArray);
+  renderPins(defaultPins);
   window.preview.reset();
   window.pinMoving.resetPosition();
 };
@@ -135,7 +135,7 @@ const on = () => {
 };
 
 const activate = (pins) => {
-  pinsArray = pins;
+  defaultPins = pins;
   convertFieldsToDisabled();
   addId();
   on();

@@ -20,12 +20,12 @@ const addFeatures = (newCard, ad) => {
     $featureSection.empty();
     const features = ad.offer.features;
     const $fragment = $(document.createDocumentFragment());
-    for (let i = 0; i < features.length; i++) {
+    features.forEach((e) => {
       const $feature = $(`<li></li>`);
       $feature.addClass(`popup__feature`);
-      $feature.addClass(`popup__feature--${features[i]}`);
+      $feature.addClass(`popup__feature--${e}`);
       $fragment.append($feature);
-    }
+    });
     $featureSection.append($fragment);
   }
 };
@@ -37,13 +37,13 @@ const addPhotos = (newCard, ad) => {
     $photosSection.remove();
   } else {
     $photosSection.empty();
-    let photos = ad.offer.photos;
+    const photos = ad.offer.photos;
     const $fragment = $(document.createDocumentFragment());
-    for (let i = 0; i < photos.length; i++) {
-      const $photo = $(`<img src="${photos[i]}" alt="${ad.offer.title}" width="45" height="45">`);
+    photos.forEach((e) => {
+      const $photo = $(`<img src="${e}" alt="${ad.offer.title}" width="45" height="45">`);
       $photo.addClass(`popup__photo`);
       $fragment.append($photo);
-    }
+    });
     $photosSection.append($fragment);
   }
 };
@@ -98,7 +98,6 @@ const on = () => {
   $(document).on(`keydown`, onEscKeydown);
 };
 
-//todo to show
 const show = (pin, pins) => {
   remove();
   render(pin, pins);
