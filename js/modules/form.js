@@ -9,18 +9,11 @@ const Message = {
   TOO_MANY_ROOMS: `Для такого варианта доступно соответствие '100 комнат' и 'не для гостей'`,
 };
 
-const MinPriceValue = {
-  BUNGALOW: 0,
-  FLAT: 1000,
-  HOUSE: 5000,
-  PALACE: 10000,
-};
-
-const TypeApartment = {
-  BUNGALOW: `bungalow`,
-  FLAT: `flat`,
-  HOUSE: `house`,
-  PALACE: `palace`,
+const TypeAndPriceValue = {
+  bungalow: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000,
 };
 
 const $form = $(`.ad-form`);
@@ -49,21 +42,10 @@ const checkRoomsAndCapacity = (evt) => {
   return Boolean(!currentMessage);
 };
 
-const onRoomOrCapacityChange = () => checkRoomsAndCapacity();
+const onRoomOrCapacityChange = (evt) => checkRoomsAndCapacity(evt);
 
 const onTypeChange = () => {
-  let minPrice = MinPriceValue.BUNGALOW;
-  switch ($type.val()) {
-    case TypeApartment.FLAT:
-      minPrice = MinPriceValue.FLAT;
-      break;
-    case TypeApartment.HOUSE:
-      minPrice = MinPriceValue.HOUSE;
-      break;
-    case TypeApartment.PALACE:
-      minPrice = MinPriceValue.PALACE;
-      break;
-  }
+  let minPrice = TypeAndPriceValue[$type.val()];
   $price.attr(`min`, minPrice);
   $price.attr(`placeholder`, minPrice);
 };
