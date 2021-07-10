@@ -30,9 +30,9 @@ const onEscapeKeydown = (evt) => {
   const $success = $main.find(`.success`);
   const $error = $main.find(`.error`);
   if (evt.key === `Escape` && $success.length) {
-    onSuccessClose(evt);
+    onSuccessClose();
   } else if (evt.key === `Escape` && $error.length) {
-    onErrorClose(evt);
+    onErrorClose();
   }
 };
 
@@ -46,8 +46,7 @@ const onDocumentClick = () => {
   }
 };
 
-const onErrorButtonClick = (evt) => {
-  evt.preventDefault();
+const onErrorButtonClick = () => {
   $(`.error`).remove();
 };
 

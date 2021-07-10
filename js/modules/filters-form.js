@@ -7,6 +7,7 @@ const ANY_VALUE = `any`;
 const PriceFiltering = {
   MIDDLE: `middle`,
   LOW: `low`,
+  HIGH: `high`,
 };
 
 const $filtersForm = $(`.map__filters`);
@@ -19,15 +20,20 @@ const $housingFeatures = $filtersForm.find(`#housing-features`);
 const checkPrice = (pins) => {
   const priceValue = $housingPrice.val();
   if (priceValue !== ANY_VALUE) {
-    pins = pins.filter((e) => {
+    pins = pins.filter((pin) => {
+      let isValid;
       switch (priceValue) {
-        case PriceFiltering.MIDDLE:
-          return e.offer.price >= MIN_PRICE_VALUE && e.offer.price <= MAX_PRICE_VALUE;
         case PriceFiltering.LOW:
-          return e.offer.price < MIN_PRICE_VALUE;
-        default:
-          return e.offer.price > MAX_PRICE_VALUE;
+          isValid = pin.offer.price < MIN_PRICE_VALUE;
+          break;
+        case PriceFiltering.MIDDLE:
+          isValid = pin.offer.price >= MIN_PRICE_VALUE && pin.offer.price <= MAX_PRICE_VALUE;
+          break;
+        case PriceFiltering.HIGH:
+          isValid = pin.offer.price > MAX_PRICE_VALUE;
+          break;
       }
+      return isValid;
     });
   }
   return pins;
@@ -36,7 +42,7 @@ const checkPrice = (pins) => {
 const checkPlace = (pins) => {
   const typeValue = $housingType.val();
   if (typeValue !== ANY_VALUE) {
-    pins = pins.filter((e) => e.offer.type === typeValue);
+    pins = pins.filter((pin) => pin.offer.type === typeValue);
   }
   return pins;
 };
@@ -44,7 +50,7 @@ const checkPlace = (pins) => {
 const checkRooms = (pins) => {
   const roomsValue = $housingRooms.val();
   if (roomsValue !== ANY_VALUE) {
-    pins = pins.filter((e) => e.offer.rooms === +roomsValue);
+    pins = pins.filter((pin) => pin.offer.rooms === +roomsValue);
   }
   return pins;
 };
@@ -52,16 +58,16 @@ const checkRooms = (pins) => {
 const checkGuests = (pins) => {
   const guestsValue = $housingGuests.val();
   if (guestsValue !== ANY_VALUE) {
-    pins = pins.filter((e) => e.offer.guests === +guestsValue);
+    pins = pins.filter((pin) => pin.offer.guests === +guestsValue);
   }
   return pins;
 };
 
 const checkCheckbox = (pins) => {
   const $checkedFeatures = $housingFeatures.find(`.map__checkbox:checked`);
-  const $features = Array.from($checkedFeatures).map((e) => e.value);
+  const $features = Array.from($checkedFeatures).map((feature) => feature.value);
   if ($features.length > 0) {
-    pins = pins.filter((e) => $features.every((checked) => e.offer.features.indexOf(checked) !== -1));
+    pins = pins.filter((pin) => $features.every((checked) => pin.offer.features.indexOf(checked) !== -1));
   }
   return pins;
 };

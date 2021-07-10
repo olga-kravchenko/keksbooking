@@ -55,15 +55,13 @@ const setMoveValue = (evt) => {
 };
 
 const onMouseMove = (evt) => {
-  evt.preventDefault();
   setMoveValue(evt);
   checkCoordinate();
   setPinPosition();
   setAddressValue();
 };
 
-const onMouseUp = (evt) => {
-  evt.preventDefault();
+const onMouseUp = () => {
   $(document).off(`mousemove`, onMouseMove);
   $(document).off(`mouseup`, onMouseUp);
 };
@@ -72,7 +70,6 @@ const onMouseDown = (evt) => {
   if (typeof evt === `object`) {
     switch (evt.button) {
       case RIGHT_BUTTON:
-        evt.preventDefault();
         startCoordinates = {
           x: evt.clientX,
           y: evt.clientY

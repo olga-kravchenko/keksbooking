@@ -2,6 +2,7 @@
 
 const STATUS_CODE_OK = 200;
 const TIMEOUT_IN_MS = 10000;
+const STATUS_TIMEOUT = `timeout`;
 
 const RequestUrl = {
   GET: `https://21.javascript.pages.academy/keksobooking/data`,
@@ -9,13 +10,15 @@ const RequestUrl = {
 };
 
 const handleErrors = ($xhr, onError) => {
+  let message;
   if ($xhr.status > STATUS_CODE_OK) {
-    onError(`Статус ответа: ${$xhr.status} ${$xhr.statusText}`);
-  } else if ($xhr.statusText === `timeout`) {
-    onError(`Запрос не успел выполниться за ${TIMEOUT_IN_MS} мс`);
+    message = `Статус ответа: ${$xhr.status} ${$xhr.statusText}`;
+  } else if ($xhr.statusText === STATUS_TIMEOUT) {
+    message = `Запрос не успел выполниться за ${TIMEOUT_IN_MS} мс`;
   } else {
-    onError(`Произошла ошибка соединения`);
+    message = `Произошла ошибка соединения`;
   }
+  onError(message);
 };
 
 const get = (onSuccess, onError) => {
@@ -35,8 +38,8 @@ const post = (dataPost, onSuccess, onError) => {
     data: dataPost,
     processData: false,
     contentType: false,
-    success: () => onSuccess(),
-    error: () => onError(),
+    success: onSuccess,
+    error: onError,
   });
 };
 

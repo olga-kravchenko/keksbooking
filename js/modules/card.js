@@ -11,56 +11,50 @@ const $map = $(`.map`);
 const $filterContainer = $(`.map__filters-container`);
 const template = $(`#card`)[0].content;
 
-const addFeatures = (newCard, ad) => {
-  const isEmptyFeatures = ad.offer.features.length === 0;
-  const $featureSection = newCard.find(`.popup__features`);
-  if (isEmptyFeatures) {
-    $featureSection.remove();
-  } else {
+const addFeatures = ($newCard, pinInfo) => {
+  const $featureSection = $newCard.find(`.popup__features`);
+  if (pinInfo.offer.features.length) {
     $featureSection.empty();
-    const features = ad.offer.features;
+    const features = pinInfo.offer.features;
     const $fragment = $(document.createDocumentFragment());
-    features.forEach((e) => {
-      const $feature = $(`<li></li>`);
-      $feature.addClass(`popup__feature`);
-      $feature.addClass(`popup__feature--${e}`);
+    features.forEach((feature) => {
+      const $feature = $(`<li class="popup__feature popup__feature--${feature}"></li>`);
       $fragment.append($feature);
     });
     $featureSection.append($fragment);
+  } else {
+    $featureSection.remove();
   }
 };
 
-const addPhotos = (newCard, ad) => {
-  const isPhotoSectionPresent = ad.offer.photos.length === 0;
-  const $photosSection = newCard.find(`.popup__photos`);
-  if (isPhotoSectionPresent) {
-    $photosSection.remove();
-  } else {
+const addPhotos = ($newCard, pinInfo) => {
+  const $photosSection = $newCard.find(`.popup__photos`);
+  if (pinInfo.offer.photos.length) {
     $photosSection.empty();
-    const photos = ad.offer.photos;
+    const photos = pinInfo.offer.photos;
     const $fragment = $(document.createDocumentFragment());
-    photos.forEach((e) => {
-      const $photo = $(`<img src="${e}" alt="${ad.offer.title}" width="45" height="45">`);
-      $photo.addClass(`popup__photo`);
+    photos.forEach((photoSrc) => {
+      const $photo = $(`<img class="popup__photo" src="${photoSrc}" alt="${pinInfo.offer.title}" width="45" height="45">`);
       $fragment.append($photo);
     });
     $photosSection.append($fragment);
+  } else {
+    $photosSection.remove();
   }
 };
 
-const create = (ad, id) => {
+const createAndInit = (pinInfo) => {
   const $newCard = $(template.cloneNode(true));
-  $newCard.find(`.popup__avatar`).attr(`src`, ad.author.avatar);
-  $newCard.find(`.popup__title`).text(ad.offer.title);
-  $newCard.find(`.popup__text--address`).text(ad.offer.address);
-  $newCard.find(`.popup__text--price`).text(`${ad.offer.price}₽/ночь`);
-  $newCard.find(`.popup__type`).text(ApartmentNames[ad.offer.type]);
-  $newCard.find(`.popup__text--capacity`).text(`${ad.offer.rooms} комнаты для ${ad.offer.guests} гостей`);
-  $newCard.find(`.popup__text--time`).text(`Заезд после ${ad.offer.checkin}, выезд до ${ad.offer.checkout}`);
-  addFeatures($newCard, ad);
-  $newCard.find(`.popup__description`).text(ad.offer.description);
-  addPhotos($newCard, ad);
-  $newCard.find(`.map__card.popup`).data(`id`, id);
+  $newCard.find(`.popup__avatar`).attr(`src`, pinInfo.author.avatar);
+  $newCard.find(`.popup__title`).text(pinInfo.offer.title);
+  $newCard.find(`.popup__text--address`).text(pinInfo.offer.address);
+  $newCard.find(`.popup__text--price`).text(`${pinInfo.offer.price}₽/ночь`);
+  $newCard.find(`.popup__type`).text(ApartmentNames[pinInfo.offer.type]);
+  $newCard.find(`.popup__text--capacity`).text(`${pinInfo.offer.rooms} комнаты для ${pinInfo.offer.guests} гостей`);
+  $newCard.find(`.popup__text--time`).text(`Заезд после ${pinInfo.offer.checkin}, выезд до ${pinInfo.offer.checkout}`);
+  addFeatures($newCard, pinInfo);
+  $newCard.find(`.popup__description`).text(pinInfo.offer.description);
+  addPhotos($newCard, pinInfo);
   return $newCard;
 };
 
@@ -71,25 +65,23 @@ const remove = () => {
   }
 };
 
-const render = (pin, pins) => {
-  const id = pin.data(`id`);
+const render = (activePin) => {
   const $fragment = $(document.createDocumentFragment());
-  const newCard = create(pins[id], id);
+  const newCard = createAndInit(activePin);
   $fragment.append(newCard);
   $map.append($fragment, $filterContainer);
 };
 
-const onCloseButtonClick = (evt) => {
+const onCloseButtonClick = () => {
   remove();
-  window.map.removeActivePin(evt);
+  window.map.removeActivePin();
 };
 
 const onEscKeydown = (evt) => {
   const isEscape = evt.key === `Escape`;
   if (isEscape) {
-    evt.preventDefault();
     remove();
-    window.map.removeActivePin(evt);
+    window.map.removeActivePin();
   }
 };
 
@@ -98,14 +90,13 @@ const on = () => {
   $(document).on(`keydown`, onEscKeydown);
 };
 
-const show = (pin, pins) => {
+const show = (activePin) => {
   remove();
-  render(pin, pins);
+  render(activePin);
   on();
 };
 
 window.card = {
-  create,
   show,
   remove,
 };

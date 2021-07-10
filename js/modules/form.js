@@ -45,7 +45,7 @@ const checkRoomsAndCapacity = (evt) => {
 const onRoomOrCapacityChange = (evt) => checkRoomsAndCapacity(evt);
 
 const onTypeChange = () => {
-  let minPrice = TypeAndPriceValue[$type.val()];
+  const minPrice = TypeAndPriceValue[$type.val()];
   $price.attr(`min`, minPrice);
   $price.attr(`placeholder`, minPrice);
 };
@@ -73,4 +73,5 @@ const on = () => {
 
 window.form = {
   on,
+  onTypeChange,
 };
