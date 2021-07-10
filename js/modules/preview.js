@@ -10,31 +10,35 @@ const $apartmentImage = $(`.ad-form__photo`);
 const onFileChooserAvatarChange = () => {
   const reader = new FileReader();
   const file = $mapImageChooser[0].files[0];
-  const fileName = file.name.toLowerCase();
-  const matchingTheFileType = FILE_TYPES.some((e) => fileName.endsWith(e));
-  if (matchingTheFileType) {
-    $(reader).on(`load`, () => {
-      $mapImage.attr(`src`, reader.result);
-      $mapImage.attr(`alt`, `Загруженное изображение`);
-    });
-    reader.readAsDataURL(file);
+  if (file) {
+    const fileName = file.name.toLowerCase();
+    const matchingTheFileType = FILE_TYPES.some((fileType) => fileName.endsWith(fileType));
+    if (matchingTheFileType) {
+      $(reader).on(`load`, () => {
+        $mapImage.attr(`src`, reader.result);
+        $mapImage.attr(`alt`, `Загруженное изображение`);
+      });
+      reader.readAsDataURL(file);
+    }
   }
 };
 
 const onFileChooserImageChange = () => {
   const reader = new FileReader();
   const file = $apartmentImageChooser[0].files[0];
-  const fileName = file.name.toLowerCase();
-  const matchingTheFileType = FILE_TYPES.some((e) => fileName.endsWith(e));
-  if (matchingTheFileType) {
-    $(reader).on(`load`, () => {
-      $apartmentImage.css({
-        'backgroundImage': `url(${reader.result})`,
-        'backgroundSize': `cover`,
-        'backgroundPosition': `center`,
+  if (file) {
+    const fileName = file.name.toLowerCase();
+    const matchingTheFileType = FILE_TYPES.some((fileType) => fileName.endsWith(fileType));
+    if (matchingTheFileType) {
+      $(reader).on(`load`, () => {
+        $apartmentImage.css({
+          'backgroundImage': `url(${reader.result})`,
+          'backgroundSize': `cover`,
+          'backgroundPosition': `center`,
+        });
       });
-    });
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
+    }
   }
 };
 
