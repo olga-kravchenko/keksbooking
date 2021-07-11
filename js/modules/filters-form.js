@@ -17,53 +17,51 @@ const $housingRooms = $filtersForm.find(`#housing-rooms`);
 const $housingGuests = $filtersForm.find(`#housing-guests`);
 const $housingFeatures = $filtersForm.find(`#housing-features`);
 
-const checkPrice = (pins) => {
-  const priceValue = $housingPrice.val();
-  if (priceValue !== ANY_VALUE) {
-    pins = pins.filter((pin) => {
-      let isValid;
-      switch (priceValue) {
-        case PriceFiltering.LOW:
-          isValid = pin.offer.price < MIN_PRICE_VALUE;
-          break;
-        case PriceFiltering.MIDDLE:
-          isValid = pin.offer.price >= MIN_PRICE_VALUE && pin.offer.price <= MAX_PRICE_VALUE;
-          break;
-        case PriceFiltering.HIGH:
-          isValid = pin.offer.price > MAX_PRICE_VALUE;
-          break;
-      }
-      return isValid;
-    });
+const checkValueByPrice = (priceValue, price) => {
+  let isValid;
+  switch (priceValue) {
+    case PriceFiltering.LOW:
+      isValid = price < MIN_PRICE_VALUE;
+      break;
+    case PriceFiltering.MIDDLE:
+      isValid = price >= MIN_PRICE_VALUE && price <= MAX_PRICE_VALUE;
+      break;
+    case PriceFiltering.HIGH:
+      isValid = price > MAX_PRICE_VALUE;
+      break;
+  }
+  return isValid;
+};
+
+const getFilteredPinsByPrice = (pins) => {
+  if ($housingPrice.val() !== ANY_VALUE) {
+    pins = pins.filter((pin) => checkValueByPrice($housingPrice.val(), pin.offer.price));
   }
   return pins;
 };
 
-const checkPlace = (pins) => {
-  const typeValue = $housingType.val();
-  if (typeValue !== ANY_VALUE) {
-    pins = pins.filter((pin) => pin.offer.type === typeValue);
+const getFilteredPinsByPlace = (pins) => {
+  if ($housingType.val() !== ANY_VALUE) {
+    pins = pins.filter((pin) => pin.offer.type === $housingType.val());
   }
   return pins;
 };
 
-const checkRooms = (pins) => {
-  const roomsValue = $housingRooms.val();
-  if (roomsValue !== ANY_VALUE) {
-    pins = pins.filter((pin) => pin.offer.rooms === +roomsValue);
+const getFilteredPinsByRooms = (pins) => {
+  if ($housingRooms.val() !== ANY_VALUE) {
+    pins = pins.filter((pin) => pin.offer.rooms === +$housingRooms.val());
   }
   return pins;
 };
 
-const checkGuests = (pins) => {
-  const guestsValue = $housingGuests.val();
-  if (guestsValue !== ANY_VALUE) {
-    pins = pins.filter((pin) => pin.offer.guests === +guestsValue);
+const getFilteredPinsByGuests = (pins) => {
+  if ($housingGuests.val() !== ANY_VALUE) {
+    pins = pins.filter((pin) => pin.offer.guests === +$housingGuests.val());
   }
   return pins;
 };
 
-const checkCheckbox = (pins) => {
+const getFilteredPinsByFeatures = (pins) => {
   const $checkedFeatures = $housingFeatures.find(`.map__checkbox:checked`);
   const $features = Array.from($checkedFeatures).map((feature) => feature.value);
   if ($features.length > 0) {
@@ -72,19 +70,17 @@ const checkCheckbox = (pins) => {
   return pins;
 };
 
-const getData = (pinsArray) => {
-  let filteredPins = [...pinsArray];
-  filteredPins = checkPrice(filteredPins);
-  filteredPins = checkPlace(filteredPins);
-  filteredPins = checkRooms(filteredPins);
-  filteredPins = checkGuests(filteredPins);
-  filteredPins = checkCheckbox(filteredPins);
+const getFilteredPins = (pins) => {
+  let filteredPins = [...pins];
+  filteredPins = getFilteredPinsByPrice(filteredPins);
+  filteredPins = getFilteredPinsByPlace(filteredPins);
+  filteredPins = getFilteredPinsByRooms(filteredPins);
+  filteredPins = getFilteredPinsByGuests(filteredPins);
+  filteredPins = getFilteredPinsByFeatures(filteredPins);
   return filteredPins;
 };
 
-const onSectionChange = () => {
-  window.map.debounce();
-};
+const onSectionChange = () => window.map.debounce();
 
 const on = () => {
   $housingType.on(`change`, onSectionChange);
@@ -95,6 +91,6 @@ const on = () => {
 };
 
 window.filtersForm = {
-  getData,
+  getFilteredPins,
   on,
 };
