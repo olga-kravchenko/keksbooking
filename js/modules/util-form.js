@@ -1,37 +1,39 @@
 'use strict';
 
 const $main = $(`main`);
-const $successTemplate = $(`#success`).contents();
-const $errorTemplate = $(`#error`).contents();
+const successTemplate = $(`#success`)[0].content;
+const errorTemplate = $(`#error`)[0].content;
+const $document = $(document);
 
 const renderSuccessModal = () => {
-  const $modalSuccess = $successTemplate.clone();
-  $main.append($modalSuccess);
-  return $modalSuccess;
+  const $successModal = $(successTemplate.cloneNode(true));
+  $main.append($successModal);
+  return $successModal;
+};
+
+const renderErrorModal = () => {
+  const $errorModal = $(errorTemplate.cloneNode(true));
+  $main.append($errorModal);
+  return $errorModal;
 };
 
 const onSuccessClose = () => {
   $(`.success`).remove();
-  offSuccess();
-  offError();
-};
-
-const renderErrorModal = () => {
-  const $modalError = $errorTemplate.clone();
-  $main.append($modalError);
-  return $modalError;
+  removeListenersOnSuccess();
 };
 
 const onErrorClose = () => {
   $(`.error`).remove();
+  removeListenersOnError();
 };
 
 const onEscapeKeydown = (evt) => {
   const $success = $main.find(`.success`);
   const $error = $main.find(`.error`);
-  if (evt.key === `Escape` && $success.length) {
+  const isEscape = evt.key === window.util.BUTTON_ESCAPE;
+  if (isEscape && $success.length) {
     onSuccessClose();
-  } else if (evt.key === `Escape` && $error.length) {
+  } else if (isEscape && $error.length) {
     onErrorClose();
   }
 };
@@ -46,43 +48,37 @@ const onDocumentClick = () => {
   }
 };
 
-const onErrorButtonClick = () => {
-  $(`.error`).remove();
+const addListenersOnSuccess = () => {
+  $document.on(`click`, onDocumentClick);
+  $document.on(`keydown`, onEscapeKeydown);
 };
 
-const onSuccess = () => {
-  $(document).on(`click`, onDocumentClick);
-  $(document).on(`keydown`, onEscapeKeydown);
+const removeListenersOnSuccess = () => {
+  $document.off(`click`, onDocumentClick);
+  $document.off(`keydown`, onEscapeKeydown);
 };
 
-const offSuccess = () => {
-  $(document).off(`click`, onDocumentClick);
-  $(document).off(`keydown`, onEscapeKeydown);
-};
-
-const onError = () => {
+const addListenersOnError = () => {
   const $errorButton = $main.find(`.error__button`);
-  $errorButton.on(`click`, onErrorButtonClick);
-  $(document).on(`click`, onDocumentClick);
-  $(document).on(`keydown`, onEscapeKeydown);
+  $errorButton.on(`click`, onErrorClose);
+  $document.on(`click`, onDocumentClick);
+  $document.on(`keydown`, onEscapeKeydown);
 };
 
-const offError = () => {
-  const $errorButton = $main.find(`.error__button`);
-  $errorButton.off(`click`, onErrorButtonClick);
-  $(document).off(`click`, onDocumentClick);
-  $(document).off(`keydown`, onEscapeKeydown);
+const removeListenersOnError = () => {
+  $document.off(`click`, onDocumentClick);
+  $document.off(`keydown`, onEscapeKeydown);
 };
 
 const showSuccessModal = () => {
   renderSuccessModal();
-  onSuccess();
+  addListenersOnSuccess();
   window.map.deactivate();
 };
 
 const showErrorModal = () => {
   renderErrorModal();
-  onError();
+  addListenersOnError();
 };
 
 window.utilForm = {
