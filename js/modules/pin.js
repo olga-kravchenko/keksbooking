@@ -14,8 +14,10 @@ const create = (pinInfo) => {
     'left': `${pinInfo.location.x + SHIFT_PIN_X}px`,
     'top': `${pinInfo.location.y + SHIFT_PIN_Y}px`
   });
-  $mapPinImg.attr(`src`, pinInfo.author.avatar);
-  $mapPinImg.attr(`alt`, pinInfo.offer.title);
+  $mapPinImg.attr({
+    'src': pinInfo.author.avatar,
+    'alt': pinInfo.offer.title,
+  });
   return $pin;
 };
 
