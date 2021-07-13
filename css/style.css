@@ -1255,14 +1255,13 @@ fieldset {
 
 
 .modal-error {
-  position: absolute;
-  top: 0;
-  left: 23px;
-  right: 0;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   z-index: 100;
   width: 566px;
   padding: 22px;
-  margin: 330px auto;
   font-size: 21px;
   text-align: center;
   line-height: 33px;
