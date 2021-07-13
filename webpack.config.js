@@ -7,7 +7,7 @@ module.exports = {
     `./js/modules/util.js`,
     `./js/modules/pin.js`,
     `./js/modules/card.js`,
-    `./js/modules/filters-form.js`,
+    `./js/modules/filter-form.js`,
     `./js/modules/pin-moving.js`,
     `./js/modules/map.js`,
     `./js/modules/preview.js`,

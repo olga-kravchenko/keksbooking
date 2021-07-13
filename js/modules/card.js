@@ -59,7 +59,7 @@ const remove = () => {
   const $card = $(`.map__card.popup`);
   if ($card.length) {
     $card.remove();
-    window.map.removeActiveClass();
+    window.pin.removeActiveClass();
     $(document).off(`keydown`, onEscKeydown);
   }
 };
