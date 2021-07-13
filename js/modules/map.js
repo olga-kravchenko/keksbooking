@@ -22,6 +22,12 @@ const onPinSectionClick = (evt) => {
   }
 };
 
+const onMainPinMouseDown = (evt) => {
+  if (evt.button === window.util.LEFT_BUTTON) {
+    activatePage();
+  }
+};
+
 const activatePage = () => {
   $map.removeClass(`map--faded`);
   $form.removeClass(`ad-form--disabled`);
@@ -31,12 +37,6 @@ const activatePage = () => {
   window.pinMoving.setAddressValue();
   window.pin.render(defaultPins);
   $pinsSection.on(`click`, onPinSectionClick);
-};
-
-const onMainPinMouseDown = (evt) => {
-  if (evt.button === window.util.LEFT_BUTTON) {
-    activatePage();
-  }
 };
 
 const onEnterKeydown = (evt) => {
@@ -61,7 +61,6 @@ const on = (pins) => {
   window.filterForm.on(pins);
   $formResetButton.on(`click`, onFormResetButtonClick);
 };
-
 
 const addIdToPins = () => {
   for (let i = 0; i < defaultPins.length; i++) {

@@ -94,7 +94,6 @@ const onSectionChange = () => {
   }, FILTER_SWITCHING_TIME);
 };
 
-
 const on = (pins) => {
   sortedPins = pins;
   $housingType.on(`change`, onSectionChange);

@@ -24,6 +24,14 @@ const $price = $form.find(`#price`);
 const $timeIn = $form.find(`#timein`);
 const $timeOut = $form.find(`#timeout`);
 
+const onTypeChange = () => {
+  const minPrice = TypeAndPriceValue[$type.val()];
+  $price.attr({
+    'min': minPrice,
+    'placeholder': minPrice
+  });
+};
+
 const checkRoomsAndCapacity = () => {
   const rooms = +$roomQuantity.val();
   const capacity = +$capacityQuantity.val();
@@ -40,15 +48,6 @@ const checkRoomsAndCapacity = () => {
 };
 
 const onRoomOrCapacityChange = () => checkRoomsAndCapacity();
-
-const onTypeChange = () => {
-  const minPrice = TypeAndPriceValue[$type.val()];
-  $price.attr({
-    'min': minPrice,
-    'placeholder': minPrice
-  });
-};
-
 const onTimeInChange = () => $timeOut.val($timeIn.val());
 const onTimeOutChange = () => $timeIn.val($timeOut.val());
 
@@ -61,13 +60,13 @@ const onFormSubmit = (evt) => {
 };
 
 const on = () => {
+  window.preview.on();
+  $type.on(`change`, onTypeChange);
   $roomQuantity.on(`change`, onRoomOrCapacityChange);
   $capacityQuantity.on(`change`, onRoomOrCapacityChange);
-  $type.on(`change`, onTypeChange);
   $timeIn.on(`change`, onTimeInChange);
   $timeOut.on(`change`, onTimeOutChange);
   $form.on(`submit`, onFormSubmit);
-  window.preview.on();
 };
 
 window.form = {

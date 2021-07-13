@@ -57,7 +57,6 @@ const showActiveCard = (evt, defaultPins) => {
   window.card.show(activePin);
 };
 
-
 window.pin = {
   render,
   create,
