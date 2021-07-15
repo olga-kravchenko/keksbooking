@@ -4,5 +4,9 @@ env:
   es6: true
   browser: true
 
+rules: {
+  "no-undef": off
+}
+
 extends:
   "htmlacademy/es5.5"
