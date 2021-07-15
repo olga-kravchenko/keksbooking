@@ -65,8 +65,8 @@ const remove = () => {
 };
 
 const onEscKeydown = (evt) => {
-  const isEscape = evt.key === window.util.BUTTON_ESCAPE;
-  if (isEscape) {
+  const isEscapeKeydown = evt.key === window.util.BUTTON_ESCAPE;
+  if (isEscapeKeydown) {
     remove();
   }
 };

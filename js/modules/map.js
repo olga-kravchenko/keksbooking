@@ -49,7 +49,7 @@ const onEnterKeydown = (evt) => {
 const onFormResetButtonClick = () => {
   $form[0].reset();
   $filterForm[0].reset();
-  window.filterForm.renderPins(defaultPins);
+  window.pin.render(defaultPins);
   window.preview.reset();
   window.pinMoving.resetPosition();
 };

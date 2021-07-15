@@ -13,39 +13,40 @@ const $mainPin = $(`.map__pin--main`);
 const $addressInput = $(`#address`);
 const $document = $(document);
 
-let coordinateX = START_COORDINATE_X;
-let coordinateY = START_COORDINATE_Y;
+let currentX = START_COORDINATE_X;
+let currentY = START_COORDINATE_Y;
 
 let previousCoordinates;
 
 const checkAndSetCoordinates = () => {
-  if (coordinateY > MAX_MAP_HEIGHT) {
-    coordinateY = MAX_MAP_HEIGHT;
-  } else if (coordinateY < MIN_MAP_HEIGHT) {
-    coordinateY = MIN_MAP_HEIGHT;
-  } else if (coordinateX > MAX_MAP_WIDTH) {
-    coordinateX = MAX_MAP_WIDTH;
-  } else if (coordinateX < MIN_MAP_WIDTH) {
-    coordinateX = MIN_MAP_WIDTH;
+  if (currentY > MAX_MAP_HEIGHT) {
+    currentY = MAX_MAP_HEIGHT;
+  } else if (currentY < MIN_MAP_HEIGHT) {
+    currentY = MIN_MAP_HEIGHT;
+  }
+  if (currentX > MAX_MAP_WIDTH) {
+    currentX = MAX_MAP_WIDTH;
+  } else if (currentX < MIN_MAP_WIDTH) {
+    currentX = MIN_MAP_WIDTH;
   }
 };
 
 const setAddressValue = () => {
-  const x = coordinateX + PIN_MIDDLE_WIDTH;
-  const y = coordinateY + PIN_HEIGHT;
+  const x = Math.floor(currentX + PIN_MIDDLE_WIDTH);
+  const y = Math.floor(currentY + PIN_HEIGHT);
   $addressInput.val(`${x}, ${y}`);
 };
 
 const setPinPosition = () => {
   $mainPin.css({
-    'top': `${coordinateY}px`,
-    'left': `${coordinateX}px`,
+    'top': `${currentY}px`,
+    'left': `${currentX}px`,
   });
 };
 
 const resetPosition = () => {
-  coordinateX = START_COORDINATE_X;
-  coordinateY = START_COORDINATE_Y;
+  currentX = START_COORDINATE_X;
+  currentY = START_COORDINATE_Y;
   setPinPosition();
 };
 
@@ -58,8 +59,8 @@ const setMoveValue = (evt) => {
     x: evt.clientX,
     y: evt.clientY,
   };
-  coordinateX = $mainPin.position().left - shift.x;
-  coordinateY = $mainPin.position().top - shift.y;
+  currentX = $mainPin.position().left - shift.x;
+  currentY = $mainPin.position().top - shift.y;
 };
 
 const onMouseMove = (evt) => {
@@ -75,8 +76,8 @@ const onMouseUp = () => {
 };
 
 const onMouseDown = (evt) => {
-  const isLeftButton = evt.button === window.util.LEFT_BUTTON;
-  if (isLeftButton) {
+  const isLeftButtonClicked = evt.button === window.util.LEFT_BUTTON;
+  if (isLeftButtonClicked) {
     previousCoordinates = {
       x: evt.clientX,
       y: evt.clientY,
@@ -89,7 +90,7 @@ const onMouseDown = (evt) => {
 const on = () => $mainPin.on(`mousedown`, onMouseDown);
 
 window.pinMoving = {
-  setAddressValue,
   on,
+  setAddressValue,
   resetPosition,
 };

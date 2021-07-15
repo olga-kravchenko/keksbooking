@@ -25,7 +25,7 @@ const create = (pinInfo) => {
 
 const removeOldOnes = () => {
   const $pins = $(`.map__pin:not(.map__pin--main)`);
-  if ($pins) {
+  if ($pins.length) {
     $pins.remove();
   }
 };
